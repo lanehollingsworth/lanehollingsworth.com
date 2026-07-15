@@ -1,0 +1,67 @@
+---
+import { render } from 'astro:content';
+import type { Post } from '../lib/posts';
+import { formatPostDate, monthKey, postDescription } from '../lib/posts';
+
+interface Props {
+  post: Post;
+  /** When true, render full body (home feed). When false, show excerpt + link. */
+  full?: boolean;
+}
+
+const { post, full = true } = Astro.props;
+const { Content } = await render(post);
+const href = `/posts/${post.id}/`;
+const description = postDescription(post);
+---
+
+<article class="post" data-month={monthKey(post.data.pubDate)} id={post.id}>
+  <p class="post-date">
+    <time datetime={post.data.pubDate.toISOString()}>
+      {formatPostDate(post.data.pubDate)}
+    </time>
+  </p>
+  <h2 class="post-title">
+    <a href={href}>{post.data.title}</a>
+  </h2>
+
+  {
+    post.data.contentType === 'book_review' && (post.data.bookTitle || post.data.bookAuthor) && (
+      <p class="book-card">
+        {[
+          post.data.bookTitle,
+          post.data.bookAuthor ? `by ${post.data.bookAuthor}` : null,
+          post.data.bookRating ? `${'★'.repeat(post.data.bookRating)}${'☆'.repeat(5 - post.data.bookRating)}` : null,
+        ]
+          .filter(Boolean)
+          .join(' · ')}
+      </p>
+    )
+  }
+
+  {
+    full ? (
+      <div class="post-content">
+        <Content />
+      </div>
+    ) : (
+      <div class="post-content">
+        <p>{description}</p>
+        <p><a href={href}>Continue reading</a></p>
+      </div>
+    )
+  }
+
+  {
+    post.data.photos.length > 0 && (
+      <div class="post-photos">
+        {post.data.photos.map((photo) => (
+          <figure class="photo-frame">
+            <img src={photo.src} alt={photo.alt || post.data.title} loading="lazy" />
+            {photo.caption && <figcaption class="photo-caption">{photo.caption}</figcaption>}
+          </figure>
+        ))}
+      </div>
+    )
+  }
+</article>

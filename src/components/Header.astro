@@ -1,0 +1,22 @@
+---
+import { site } from '../lib/site';
+
+interface Props {
+  current?: 'home' | 'archive';
+}
+
+const { current = 'home' } = Astro.props;
+---
+
+<header class="site-header">
+  <h1 class="site-title">
+    <a href="/">{site.name}</a>
+  </h1>
+  <p class="site-subtitle">
+    A quiet place for thoughts, photos, and notes — instead of the scroll.
+  </p>
+  <nav class="site-nav" aria-label="Primary">
+    <a href="/" aria-current={current === 'home' ? 'page' : undefined}>Journal</a>
+    <a href="/rss.xml">RSS</a>
+  </nav>
+</header>

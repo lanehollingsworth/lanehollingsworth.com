@@ -1,0 +1,71 @@
+---
+interface Month {
+  key: string;
+  label: string;
+  count: number;
+}
+
+interface Props {
+  months: Month[];
+}
+
+const { months } = Astro.props;
+---
+
+<aside class="month-sidebar" aria-label="Browse by month">
+  <h2>Archive</h2>
+  {
+    months.length === 0 ? (
+      <p class="empty-state" style="padding: 0; font-size: 0.95rem;">No posts yet</p>
+    ) : (
+      <ul class="month-list" id="month-list">
+        <li>
+          <button type="button" data-month="all" aria-current="true">All</button>
+        </li>
+        {months.map((month) => (
+          <li>
+            <button type="button" data-month={month.key}>
+              {month.label} <span class="month-count">({month.count})</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</aside>
+
+<script>
+  function applyMonthFilter(month: string) {
+    const posts = document.querySelectorAll<HTMLElement>('.post[data-month]');
+    posts.forEach((post) => {
+      const match = month === 'all' || post.dataset.month === month;
+      post.hidden = !match;
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('#month-list button').forEach((button) => {
+      button.setAttribute(
+        'aria-current',
+        button.dataset.month === month ? 'true' : 'false',
+      );
+    });
+
+    const url = new URL(window.location.href);
+    if (month === 'all') {
+      url.searchParams.delete('month');
+    } else {
+      url.searchParams.set('month', month);
+    }
+    history.replaceState({}, '', url);
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('#month-list button').forEach((button) => {
+    button.addEventListener('click', () => {
+      applyMonthFilter(button.dataset.month ?? 'all');
+    });
+  });
+
+  const initial = new URL(window.location.href).searchParams.get('month');
+  if (initial) {
+    applyMonthFilter(initial);
+  }
+</script>
