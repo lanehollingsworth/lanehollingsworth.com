@@ -2,7 +2,7 @@ export const site = {
   name: 'Lane Hollingsworth',
   url: 'https://lanehollingsworth.com',
   description:
-    'A quiet personal journal — thoughts, photos, and notes from Lane Hollingsworth.',
+    'Personal journal by Lane Hollingsworth — thoughts, photos, book notes, and everyday moments, without the social-media scroll.',
   author: 'Lane Hollingsworth',
   email: 'lane.hollingsworth@gmail.com',
   locale: 'en_US',

@@ -82,19 +82,16 @@ Carried over from the original Claude / Hostinger design:
 - Month archive filter in the sidebar
 - Title and words first; photos below
 
-## Deploy (recommended: Vercel)
+## Deploy
 
-1. Go to [vercel.com](https://vercel.com) and sign in with GitHub.
-2. Import `lanehollingsworth/lanehollingsworth.com`.
-3. Framework preset: **Astro** (defaults are fine).
-4. Deploy.
-5. In Vercel → Project → Settings → Domains, add `lanehollingsworth.com` and `www.lanehollingsworth.com`.
-6. In Squarespace Domains (where the domain is registered), point DNS as Vercel instructs — usually:
-   - `A` record for `@` → Vercel’s IP, and/or
-   - `CNAME` for `www` → `cname.vercel-dns.com`
-7. Remove any leftover Hostinger nameservers / records once Vercel shows the domain as valid.
+See **[NEXT_STEPS.md](./NEXT_STEPS.md)** for the click-by-click path (Vercel or GitHub Pages + Squarespace DNS).
 
-GitHub Pages also works (`npm run build` → publish `dist/`), but Vercel is simpler for a custom domain.
+Repo already includes:
+
+- `.github/workflows/ci.yml` — build check on PRs
+- `.github/workflows/deploy-pages.yml` — GitHub Pages deploy from `main`
+- `vercel.json` — Vercel project defaults
+- `public/CNAME` — `lanehollingsworth.com`
 
 ## What’s intentionally not in v1
 
