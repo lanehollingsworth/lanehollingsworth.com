@@ -1,59 +1,46 @@
-# Next steps — what still needs a human click
+# Next steps
 
-The site code is ready in PR #1. These remaining steps need your account access (this Cloud Agent cannot open Vercel, Squarespace, Hostinger, or browser MCP tools yet).
+## Done
 
-## 1. Authenticate Linear MCP (optional)
+- Site deployed on Vercel: **https://lanehollingsworth-com.vercel.app**
+- Custom domains attached: `lanehollingsworth.com` + `www` (www redirects to apex)
+- Project: https://vercel.com/lanehollingsworth/lanehollingsworth-com
 
-Linear appears in this Cloud Agent as **needs authentication**. Interactive MCP login only works in the **Cursor desktop IDE**:
+## You still need: fix DNS (Squarespace or wherever nameservers are managed)
 
-1. Open Cursor Desktop
-2. Settings → MCP → Linear → Connect / Sign in
-3. Come back to this Cloud Agent chat and ask me to create a project/issues checklist
+Right now the domain uses Hostinger parking nameservers:
 
-Chrome / Control / Cloud-for-Chrome are **not visible** in this Cloud Agent environment at all (only `cursor-cloud` diagnostics + Linear). If you connected those in Desktop, they may not carry over here — reconnect them for the Cloud Agent / this environment, or we continue with click-by-click instructions.
+- `atlas.dns-parking.com`
+- `hyperion.dns-parking.com`
 
-## 2. Merge the PR
+Vercel will not serve `lanehollingsworth.com` until DNS changes.
 
-Merge: https://github.com/lanehollingsworth/lanehollingsworth.com/pull/1
+### Recommended (simplest): A + CNAME records
 
-## 3. Put the site online (pick one)
+At your DNS provider (Squarespace Domains, or wherever you can edit DNS for this domain):
 
-### Option A — Vercel (recommended)
+| Type | Name / Host | Value |
+|------|-------------|-------|
+| **A** | `@` (or blank / apex) | `76.76.21.21` |
+| **CNAME** | `www` | `cname.vercel-dns.com` |
 
-1. Go to https://vercel.com → Continue with GitHub
-2. **Add New Project** → import `lanehollingsworth/lanehollingsworth.com`
-3. Framework: Astro (auto-detected) → Deploy
-4. Project → Settings → Domains → add `lanehollingsworth.com` and `www`
-5. Copy the DNS records Vercel shows
+Remove old Hostinger / Horizons records that conflict.
 
-### Option B — GitHub Pages
+### Alternate: point nameservers at Vercel
 
-A workflow is already in the repo (`.github/workflows/deploy-pages.yml`).
+If you prefer nameserver delegation instead of records:
 
-1. Repo → **Settings → Pages**
-2. Source: **GitHub Actions**
-3. Merge to `main` (or run the workflow manually)
-4. Settings → Pages → Custom domain → `lanehollingsworth.com` → save
-5. Enable “Enforce HTTPS” once DNS is ready
+- `ns1.vercel-dns.com`
+- `ns2.vercel-dns.com`
 
-## 4. Point the domain (Squarespace)
+DNS often updates within an hour; can take up to 48 hours.
 
-Your domain is registered at Squarespace. After Vercel or GitHub Pages gives you DNS values:
+When ready, tell me and I can re-check: `vercel domains inspect lanehollingsworth.com`.
 
-1. Squarespace → Domains → `lanehollingsworth.com` → DNS
-2. Remove Hostinger nameservers / leftover Horizons records
-3. Add the A / CNAME records from Vercel **or** GitHub Pages
-4. Wait for DNS (often under an hour, sometimes up to 48h)
+## Optional follow-ups
 
-## 5. Recover old posts
-
-The Hostinger chat proves ~3 posts existed but does not include their text. Paste anything you still have (Notes, email drafts, screenshots, photo captions) into chat and I’ll turn them into Markdown posts under `src/content/posts/`.
-
-## Already done in the repo
-
-- Astro journal site with cream/brown design
-- Markdown posts in git
-- Month archive, SEO, RSS, sitemap, GA (`G-XVL839YKPD`)
-- CI build workflow
-- GitHub Pages deploy workflow
-- `vercel.json` + `CNAME`
+1. **Merge PR #1** so GitHub `main` matches what’s live: https://github.com/lanehollingsworth/lanehollingsworth.com/pull/1
+2. **Connect GitHub ↔ Vercel** (auto-deploys on push): in Vercel, add a GitHub Login Connection, then link `lanehollingsworth/lanehollingsworth.com` to the project. CLI deploy already works without that.
+3. **Revoke the Vercel token** you pasted in chat after we’re done: https://vercel.com/account/tokens
+4. **Restore old posts** — paste any drafts/screenshots/notes and I’ll add Markdown files.
+5. **MCP auth in Cursor Desktop** (Linear / Composio) if you want those tools usable from Cloud later.
