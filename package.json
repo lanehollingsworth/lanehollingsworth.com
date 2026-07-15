@@ -11,7 +11,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "dns:squarespace": "node scripts/set-squarespace-dns.mjs"
+    "dns:squarespace": "node scripts/set-squarespace-dns.mjs",
+    "dns:check": "node scripts/set-squarespace-dns.mjs --check-only"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.15",

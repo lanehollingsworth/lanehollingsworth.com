@@ -1,37 +1,39 @@
 /**
  * Automate Squarespace DNS so lanehollingsworth.com points at Vercel.
  *
- * Required env vars (put in /workspace/.env — never commit this file):
+ * Required in /.env (never commit):
  *   SQUARESPACE_EMAIL=
  *   SQUARESPACE_PASSWORD=
  *
  * Optional:
- *   HEADLESS=false          # watch the browser (default true)
- *   DOMAIN=lanehollingsworth.com
+ *   DOMAIN=lanehollingsworth.com   (or DOMAIN_NAME)
  *   VERCEL_A=76.76.21.21
  *   VERCEL_WWW_CNAME=cname.vercel-dns.com
+ *   HEADLESS=false
+ *   VERCEL_TOKEN=                  # optional: confirm domain config via Vercel API
  *
- * Run:
- *   npm run dns:squarespace
- *
- * If you use 2FA on Squarespace, this script will pause and fail with a
- * screenshot — turn 2FA off temporarily or complete DNS once by hand.
+ * Run: npm run dns:squarespace
+ * Check only: npm run dns:check
  */
 
 import 'dotenv/config';
 import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
+import dns from 'node:dns/promises';
 
 const email = process.env.SQUARESPACE_EMAIL;
 const password = process.env.SQUARESPACE_PASSWORD;
-const domain = process.env.DOMAIN || 'lanehollingsworth.com';
+const domain = process.env.DOMAIN || process.env.DOMAIN_NAME || 'lanehollingsworth.com';
 const vercelA = process.env.VERCEL_A || '76.76.21.21';
 const vercelWww = process.env.VERCEL_WWW_CNAME || 'cname.vercel-dns.com';
 const headless = process.env.HEADLESS !== 'false';
+const vercelToken = process.env.VERCEL_TOKEN;
 const outDir = path.resolve('scripts/output');
+const checkOnly = process.argv.includes('--check-only');
 
 function requireEnv() {
+  if (checkOnly) return;
   if (!email || !password) {
     console.error(`
 Missing Squarespace credentials.
@@ -40,6 +42,7 @@ Create /workspace/.env with:
 
   SQUARESPACE_EMAIL=you@example.com
   SQUARESPACE_PASSWORD=your-password
+  DOMAIN_NAME=lanehollingsworth.com
 
 Then run: npm run dns:squarespace
 `);
@@ -101,7 +104,6 @@ async function login(page) {
     'email',
   );
 
-  // Some Squarespace flows are email-first
   await clickFirst(
     page,
     [
@@ -142,10 +144,32 @@ async function login(page) {
   await shot(page, '01-after-login');
 
   const body = (await page.textContent('body').catch(() => '')) || '';
-  if (/verification|two-factor|authenticator|enter code|2fa/i.test(body)) {
-    throw new Error(
-      'Squarespace is asking for 2FA / verification. Complete that in a normal browser, or temporarily disable 2FA, then re-run.',
+  const looks2fa = /verification|two-factor|authenticator|enter code|2fa|one-time/i.test(
+    body,
+  );
+
+  if (looks2fa) {
+    if (headless) {
+      throw new Error(
+        'Squarespace is asking for 2FA. Re-run with HEADLESS=false so you can type the code, or disable 2FA temporarily.',
+      );
+    }
+    console.log(
+      '2FA detected — enter the code in the browser window. Waiting up to 2 minutes…',
     );
+    await page
+      .waitForFunction(
+        () =>
+          !/verification|two-factor|authenticator|enter code|2fa/i.test(
+            document.body?.innerText || '',
+          ),
+        null,
+        { timeout: 120000 },
+      )
+      .catch(() => {
+        throw new Error('Timed out waiting for 2FA to be completed.');
+      });
+    await shot(page, '01b-after-2fa');
   }
 }
 
@@ -158,20 +182,14 @@ async function openDomainDns(page) {
   await page.waitForTimeout(3000);
   await shot(page, '02-domains-list');
 
-  // Click the domain row / link
   const domainClicked = await clickFirst(
     page,
-    [
-      `a:has-text("${domain}")`,
-      `text=${domain}`,
-      `[href*="${domain}"]`,
-    ],
+    [`a:has-text("${domain}")`, `text=${domain}`, `[href*="${domain}"]`],
     'domain',
   );
 
   if (!domainClicked) {
-    // Try domains.squarespace.com
-    await page.goto(`https://domains.squarespace.com/`, {
+    await page.goto('https://domains.squarespace.com/', {
       waitUntil: 'domcontentloaded',
       timeout: 60000,
     });
@@ -197,7 +215,6 @@ async function openDomainDns(page) {
   );
 
   if (!dnsOpened) {
-    // Direct-ish URLs used by some Squarespace domain UIs
     const candidates = [
       `https://account.squarespace.com/domains/managed/${domain}/dns`,
       `https://domain-management.squarespace.com/domains/${domain}/dns`,
@@ -218,96 +235,134 @@ async function openDomainDns(page) {
   await shot(page, '04-dns-panel');
 }
 
-async function upsertRecords(page) {
-  console.log('Ensuring Vercel DNS records…');
+async function deleteConflictingRows(page) {
+  console.log('Looking for conflicting @ A / www CNAME rows to remove…');
 
-  // Prefer "Custom records" area if present
+  // Prefer rows that look like DNS table entries containing A/@ or CNAME/www
+  // but NOT already pointing at Vercel targets.
+  const rowSelectors = [
+    'tr',
+    '[role="row"]',
+    'li',
+    'div[class*="record" i]',
+    'div[class*="Record" i]',
+  ];
+
+  let deleted = 0;
+
+  for (const rowSel of rowSelectors) {
+    const rows = page.locator(rowSel);
+    const count = await rows.count();
+    for (let i = 0; i < count; i++) {
+      const row = rows.nth(i);
+      const text = ((await row.innerText().catch(() => '')) || '').replace(/\s+/g, ' ');
+      if (!text || text.length > 400) continue;
+
+      const isApexA =
+        /\bA\b/.test(text) &&
+        /(^|\s)@(\s|$)/.test(text) &&
+        !text.includes(vercelA);
+      const isWwwCname =
+        /CNAME/i.test(text) &&
+        /\bwww\b/i.test(text) &&
+        !/cname\.vercel-dns\.com/i.test(text);
+
+      if (!isApexA && !isWwwCname) continue;
+
+      const deleteBtn = row
+        .locator(
+          'button:has-text("Delete"), button:has-text("Remove"), button[aria-label*="Delete" i], button[aria-label*="Remove" i], [data-test*="delete" i]',
+        )
+        .first();
+
+      if (!(await deleteBtn.count())) continue;
+
+      console.log(`Deleting conflicting row: ${text.slice(0, 120)}`);
+      await deleteBtn.click({ timeout: 3000 }).catch(() => null);
+      await page.waitForTimeout(500);
+      await clickFirst(
+        page,
+        [
+          'button:has-text("Confirm")',
+          'button:has-text("Delete")',
+          'button:has-text("Remove")',
+          'button:has-text("Yes")',
+        ],
+        'confirm delete',
+      );
+      await page.waitForTimeout(1000);
+      deleted += 1;
+    }
+  }
+
+  console.log(`Deleted ${deleted} conflicting row(s) (0 is OK if UI hid delete controls).`);
+  await shot(page, '05-after-deletes');
+}
+
+async function addRecord(page, { type, host, data }) {
+  console.log(`Adding ${type} ${host} -> ${data}`);
+
   await clickFirst(
     page,
     [
       'button:has-text("Add record")',
       'button:has-text("Add Record")',
-      'a:has-text("Add record")',
       'button:has-text("Add")',
     ],
-    'add record opener',
-  ).catch(() => false);
+    `add ${type}`,
+  );
 
-  await shot(page, '05-before-edit');
+  await page.waitForTimeout(800);
 
-  /**
-   * Squarespace’s DNS UI varies. We try a structured form flow; if selectors
-   * fail, screenshots in scripts/output/ show exactly what the page looks like
-   * so we can adjust quickly.
-   */
-  async function addRecord({ type, host, data }) {
-    console.log(`Adding ${type} ${host} -> ${data}`);
-
-    await clickFirst(
-      page,
-      [
-        'button:has-text("Add record")',
-        'button:has-text("Add Record")',
-        'button:has-text("Add")',
-      ],
-      `add ${type}`,
-    );
-
-    await page.waitForTimeout(800);
-
-    // Type dropdown
-    const typeSelect = page.locator('select').filter({ hasText: /A|CNAME|MX/i }).first();
-    if (await typeSelect.count()) {
-      await typeSelect.selectOption({ label: type }).catch(async () => {
-        await typeSelect.selectOption(type);
-      });
-    } else {
-      await clickFirst(page, [`text=${type}`, `button:has-text("${type}")`], `${type} type`);
-    }
-
-    // Host / Name
-    await fillFirst(
-      page,
-      [
-        'input[name="host"]',
-        'input[placeholder*="Host" i]',
-        'input[aria-label*="Host" i]',
-        'input[name="name"]',
-        'input[placeholder="@"]',
-      ],
-      host,
-      'host',
-    );
-
-    // Data / Points to
-    await fillFirst(
-      page,
-      [
-        'input[name="data"]',
-        'input[name="value"]',
-        'input[placeholder*="Points" i]',
-        'input[aria-label*="Data" i]',
-        'input[aria-label*="Value" i]',
-        'input[placeholder*="Value" i]',
-      ],
-      data,
-      'value',
-    );
-
-    await clickFirst(
-      page,
-      [
-        'button:has-text("Save")',
-        'button:has-text("Add")',
-        'button[type="submit"]',
-      ],
-      `save ${type}`,
-    );
-
-    await page.waitForTimeout(1500);
+  const typeSelect = page.locator('select').filter({ hasText: /A|CNAME|MX/i }).first();
+  if (await typeSelect.count()) {
+    await typeSelect.selectOption({ label: type }).catch(async () => {
+      await typeSelect.selectOption(type);
+    });
+  } else {
+    await clickFirst(page, [`text=${type}`, `button:has-text("${type}")`], `${type} type`);
   }
 
-  // Remove conflicting apex A / www CNAME if UI exposes delete near those rows
+  await fillFirst(
+    page,
+    [
+      'input[name="host"]',
+      'input[placeholder*="Host" i]',
+      'input[aria-label*="Host" i]',
+      'input[name="name"]',
+      'input[placeholder="@"]',
+    ],
+    host,
+    'host',
+  );
+
+  await fillFirst(
+    page,
+    [
+      'input[name="data"]',
+      'input[name="value"]',
+      'input[placeholder*="Points" i]',
+      'input[aria-label*="Data" i]',
+      'input[aria-label*="Value" i]',
+      'input[placeholder*="Value" i]',
+    ],
+    data,
+    'value',
+  );
+
+  await clickFirst(
+    page,
+    ['button:has-text("Save")', 'button:has-text("Add")', 'button[type="submit"]'],
+    `save ${type}`,
+  );
+
+  await page.waitForTimeout(1500);
+}
+
+async function upsertRecords(page) {
+  console.log('Ensuring Vercel DNS records…');
+  await deleteConflictingRows(page);
+
   const bodyText = (await page.textContent('body')) || '';
   console.log('DNS panel text sample:', bodyText.slice(0, 400).replace(/\s+/g, ' '));
 
@@ -316,23 +371,113 @@ async function upsertRecords(page) {
     bodyText.includes(vercelWww) || bodyText.includes('cname.vercel-dns.com');
 
   if (!hasApex) {
-    await addRecord({ type: 'A', host: '@', data: vercelA });
+    await addRecord(page, { type: 'A', host: '@', data: vercelA });
   } else {
-    console.log('Apex A record already mentions Vercel IP — leaving as-is.');
+    console.log('Apex A already points at Vercel IP — leaving as-is.');
   }
 
   if (!hasWww) {
-    await addRecord({ type: 'CNAME', host: 'www', data: vercelWww });
+    await addRecord(page, { type: 'CNAME', host: 'www', data: vercelWww });
   } else {
-    console.log('www CNAME already mentions Vercel — leaving as-is.');
+    console.log('www CNAME already points at Vercel — leaving as-is.');
   }
 
+  await clickFirst(
+    page,
+    ['button:has-text("Save")', 'button:has-text("Save Changes")'],
+    'final save',
+  ).catch(() => false);
+
   await shot(page, '06-after-edit');
+}
+
+async function checkPublicDns() {
+  console.log(`\nChecking public DNS for ${domain}…`);
+  const result = {
+    a: [],
+    www: [],
+    okA: false,
+    okWww: false,
+    httpApex: null,
+    httpWww: null,
+    vercelApp: null,
+  };
+
+  try {
+    result.a = await dns.resolve4(domain);
+  } catch (err) {
+    console.log(`A ${domain}: not resolving (${err.code || err.message})`);
+  }
+
+  try {
+    const cnames = await dns.resolveCname(`www.${domain}`);
+    result.www = cnames;
+  } catch {
+    try {
+      result.www = await dns.resolve4(`www.${domain}`);
+    } catch (err) {
+      console.log(`www.${domain}: not resolving (${err.code || err.message})`);
+    }
+  }
+
+  result.okA = result.a.includes(vercelA) || result.a.includes('76.76.21.21');
+  result.okWww = result.www.some((v) =>
+    String(v).toLowerCase().includes('vercel-dns'),
+  );
+
+  console.log(`A records: ${result.a.join(', ') || '(none)'}`);
+  console.log(`www records: ${result.www.join(', ') || '(none)'}`);
+  console.log(`A looks like Vercel: ${result.okA}`);
+  console.log(`www looks like Vercel: ${result.okWww}`);
+
+  for (const [label, url] of [
+    ['apex', `https://${domain}/`],
+    ['www', `https://www.${domain}/`],
+    ['vercelApp', 'https://lanehollingsworth-com.vercel.app/'],
+  ]) {
+    try {
+      const res = await fetch(url, { redirect: 'manual' });
+      result[label === 'apex' ? 'httpApex' : label === 'www' ? 'httpWww' : 'vercelApp'] =
+        res.status;
+      console.log(`HTTP ${label}: ${res.status}`);
+    } catch (err) {
+      console.log(`HTTP ${label}: fail (${err.message})`);
+    }
+  }
+
+  if (vercelToken) {
+    try {
+      const teams = await fetch('https://api.vercel.com/v2/teams', {
+        headers: { Authorization: `Bearer ${vercelToken}` },
+      }).then((r) => r.json());
+      const team = (teams.teams || []).find((t) => t.slug === 'lanehollingsworth');
+      const teamQs = team ? `?teamId=${team.id}` : '';
+      const config = await fetch(
+        `https://api.vercel.com/v6/domains/${domain}/config${teamQs}`,
+        { headers: { Authorization: `Bearer ${vercelToken}` } },
+      ).then((r) => r.json());
+      console.log(
+        `Vercel domain misconfigured: ${config.misconfigured === true ? 'yes' : 'no'}`,
+      );
+      if (config.nameservers) {
+        console.log(`Current nameservers: ${config.nameservers.join(', ')}`);
+      }
+    } catch (err) {
+      console.log(`Vercel API check skipped/failed: ${err.message}`);
+    }
+  }
+
+  return result;
 }
 
 async function main() {
   requireEnv();
   await mkdir(outDir, { recursive: true });
+
+  if (checkOnly) {
+    await checkPublicDns();
+    return;
+  }
 
   const browser = await chromium.launch({ headless });
   const context = await browser.newContext({
@@ -347,14 +492,11 @@ async function main() {
     await openDomainDns(page);
     await upsertRecords(page);
     console.log(`
-Done attempting DNS update for ${domain}.
+Squarespace DNS update attempted for ${domain}.
 
 Expected records:
   A     @    ${vercelA}
   CNAME www  ${vercelWww}
-
-Wait 15–60 minutes, then visit https://${domain}
-Screenshots saved under scripts/output/
 `);
   } catch (err) {
     await shot(page, 'error');
@@ -364,6 +506,10 @@ Screenshots saved under scripts/output/
   } finally {
     await browser.close();
   }
+
+  await checkPublicDns();
+  console.log('\nScreenshots: scripts/output/');
+  console.log('Re-check anytime with: npm run dns:check');
 }
 
 main();
