@@ -6,36 +6,38 @@
 - Custom domains attached: `lanehollingsworth.com` + `www` (www redirects to apex)
 - Project: https://vercel.com/lanehollingsworth/lanehollingsworth-com
 
-## You still need: fix DNS (Squarespace or wherever nameservers are managed)
+## DNS: point the domain at Vercel
 
-Right now the domain uses Hostinger parking nameservers:
+Squarespace has no public DNS API for normal accounts. Vercel already has the domain attached; the missing piece is Squarespace (or current nameservers) publishing the records.
 
-- `atlas.dns-parking.com`
-- `hyperion.dns-parking.com`
+### Option A — Playwright automation (in this repo)
 
-Vercel will not serve `lanehollingsworth.com` until DNS changes.
+```bash
+cp .env.example .env
+# put SQUARESPACE_EMAIL and SQUARESPACE_PASSWORD in .env
+npm run dns:squarespace
+```
 
-### Recommended (simplest): A + CNAME records
+Script: `scripts/set-squarespace-dns.mjs`  
+It logs into Squarespace and tries to set:
 
-At your DNS provider (Squarespace Domains, or wherever you can edit DNS for this domain):
+| Type | Name | Value |
+|------|------|-------|
+| **A** | `@` | `76.76.21.21` |
+| **CNAME** | `www` | `cname.vercel-dns.com` |
+
+If Squarespace asks for 2FA, the script stops and saves a screenshot under `scripts/output/`.
+
+### Option B — Permanent API control (Cloudflare)
+
+Move nameservers from Squarespace → Cloudflare (free), then DNS can be changed via API/MCP forever. That still needs one nameserver change at the registrar.
+
+### Manual fallback records
 
 | Type | Name / Host | Value |
 |------|-------------|-------|
-| **A** | `@` (or blank / apex) | `76.76.21.21` |
+| **A** | `@` | `76.76.21.21` |
 | **CNAME** | `www` | `cname.vercel-dns.com` |
-
-Remove old Hostinger / Horizons records that conflict.
-
-### Alternate: point nameservers at Vercel
-
-If you prefer nameserver delegation instead of records:
-
-- `ns1.vercel-dns.com`
-- `ns2.vercel-dns.com`
-
-DNS often updates within an hour; can take up to 48 hours.
-
-When ready, tell me and I can re-check: `vercel domains inspect lanehollingsworth.com`.
 
 ## Optional follow-ups
 

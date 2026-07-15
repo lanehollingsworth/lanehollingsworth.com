@@ -10,11 +10,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "dns:squarespace": "node scripts/set-squarespace-dns.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.6.0",
     "astro": "^7.0.9"
+  },
+  "devDependencies": {
+    "dotenv": "^17.4.2",
+    "playwright": "^1.61.1"
   }
 }
