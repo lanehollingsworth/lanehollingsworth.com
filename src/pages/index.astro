@@ -2,24 +2,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import MonthSidebar from '../components/MonthSidebar.astro';
 import PostCard from '../components/PostCard.astro';
-import { getPublishedPosts, getMonthGroups } from '../lib/posts';
+import { getPublishedPosts } from '../lib/posts';
 import { site } from '../lib/site';
 
 const posts = await getPublishedPosts();
-const months = getMonthGroups(posts);
 ---
 
 <BaseLayout description={site.description}>
-  <div class="site-shell">
+  <div class="site-shell site-shell--single">
     <div class="site-main">
       <Header current="home" />
 
       {
-        posts.length === 0 ? (
-          <p class="empty-state">No journal entries yet. The first one is waiting to be written.</p>
-        ) : (
+        posts.length > 0 && (
           <div class="posts">
             {posts.map((post) => (
               <PostCard post={post} full />
@@ -30,7 +26,5 @@ const months = getMonthGroups(posts);
 
       <Footer />
     </div>
-
-    <MonthSidebar months={months} />
   </div>
 </BaseLayout>

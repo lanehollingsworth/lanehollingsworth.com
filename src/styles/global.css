@@ -72,6 +72,16 @@ a:focus-visible {
   align-items: start;
 }
 
+.site-shell--single {
+  grid-template-columns: 1fr;
+}
+
+.site-shell--single .site-main {
+  max-width: var(--measure);
+  margin: 0 auto;
+  width: 100%;
+}
+
 .site-main {
   min-width: 0;
   max-width: var(--measure);
@@ -101,16 +111,6 @@ a:focus-visible {
 
 .site-title a:hover {
   color: var(--brown-mid);
-}
-
-.site-subtitle {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-style: italic;
-  font-weight: 400;
-  color: var(--ink-soft);
-  max-width: 28rem;
 }
 
 .site-nav {
