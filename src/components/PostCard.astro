@@ -1,18 +1,14 @@
 ---
 import { render } from 'astro:content';
 import type { Post } from '../lib/posts';
-import { formatPostDate, monthKey, postDescription } from '../lib/posts';
+import { formatPostDate, monthKey } from '../lib/posts';
 
 interface Props {
   post: Post;
-  /** When true, render full body (home feed). When false, show excerpt + link. */
-  full?: boolean;
 }
 
-const { post, full = true } = Astro.props;
+const { post } = Astro.props;
 const { Content } = await render(post);
-const href = `/posts/${post.id}/`;
-const description = postDescription(post);
 ---
 
 <article class="post" data-month={monthKey(post.data.pubDate)} id={post.id}>
@@ -21,36 +17,28 @@ const description = postDescription(post);
       {formatPostDate(post.data.pubDate)}
     </time>
   </p>
-  <h2 class="post-title">
-    <a href={href}>{post.data.title}</a>
-  </h2>
+  <h2 class="post-title">{post.data.title}</h2>
 
   {
-    post.data.contentType === 'book_review' && (post.data.bookTitle || post.data.bookAuthor) && (
-      <p class="book-card">
-        {[
-          post.data.bookTitle,
-          post.data.bookAuthor ? `by ${post.data.bookAuthor}` : null,
-          post.data.bookRating ? `${'★'.repeat(post.data.bookRating)}${'☆'.repeat(5 - post.data.bookRating)}` : null,
-        ]
-          .filter(Boolean)
-          .join(' · ')}
-      </p>
-    )
+    post.data.contentType === 'book_review' &&
+      (post.data.bookTitle || post.data.bookAuthor) && (
+        <p class="book-card">
+          {[
+            post.data.bookTitle,
+            post.data.bookAuthor ? `by ${post.data.bookAuthor}` : null,
+            post.data.bookRating
+              ? `${'★'.repeat(post.data.bookRating)}${'☆'.repeat(5 - post.data.bookRating)}`
+              : null,
+          ]
+            .filter(Boolean)
+            .join(' · ')}
+        </p>
+      )
   }
 
-  {
-    full ? (
-      <div class="post-content">
-        <Content />
-      </div>
-    ) : (
-      <div class="post-content">
-        <p>{description}</p>
-        <p><a href={href}>Continue reading</a></p>
-      </div>
-    )
-  }
+  <div class="post-content">
+    <Content />
+  </div>
 
   {
     post.data.photos.length > 0 && (

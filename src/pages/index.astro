@@ -12,13 +12,13 @@ const posts = await getPublishedPosts();
 <BaseLayout description={site.description}>
   <div class="site-shell site-shell--single">
     <div class="site-main">
-      <Header current="home" />
+      <Header />
 
       {
         posts.length > 0 && (
-          <div class="posts">
+          <div class="posts" id="posts">
             {posts.map((post) => (
-              <PostCard post={post} full />
+              <PostCard post={post} />
             ))}
           </div>
         )
