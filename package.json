@@ -1,0 +1,25 @@
+{
+  "name": "lanehollingsworth.com",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "dns:squarespace": "node scripts/set-squarespace-dns.mjs",
+    "dns:check": "node scripts/set-squarespace-dns.mjs --check-only"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^7.0.9"
+  },
+  "devDependencies": {
+    "dotenv": "^17.4.2",
+    "playwright": "^1.61.1"
+  }
+}

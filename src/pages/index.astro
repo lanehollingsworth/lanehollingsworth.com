@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PostCard from '../components/PostCard.astro';
+import { getPublishedPosts } from '../lib/posts';
+import { site } from '../lib/site';
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout description={site.description}>
+  <div class="site-shell site-shell--single">
+    <div class="site-main">
+      <Header />
+
+      {
+        posts.length > 0 && (
+          <div class="posts" id="posts">
+            {posts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        )
+      }
+
+      <Footer />
+    </div>
+  </div>
+</BaseLayout>
