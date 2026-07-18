@@ -215,25 +215,77 @@ a:focus-visible {
   font-style: italic;
 }
 
-.post-photos {
+.photo-carousel {
   margin-top: 2.25rem;
+}
+
+.photo-carousel__viewport {
   display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 0;
 }
 
-.photo-frame {
-  width: 100%;
+.photo-carousel__viewport::-webkit-scrollbar {
+  display: none;
 }
 
-.photo-frame img {
+.photo-carousel__slide {
+  flex: 0 0 100%;
   width: 100%;
+  margin: 0;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.photo-carousel__frame {
+  width: 100%;
+  padding: 0 0.35rem;
+  box-sizing: border-box;
+}
+
+.photo-carousel__frame img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
   border: 1px solid rgba(160, 130, 109, 0.35);
   box-shadow: 0 10px 30px var(--paper-shadow);
+  background: var(--bg-deep);
+  user-select: none;
+}
+
+.photo-carousel__dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+  min-height: 1rem;
+}
+
+.photo-carousel__dot {
+  appearance: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(160, 130, 109, 0.45);
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.photo-carousel__dot.is-active {
+  background: var(--brown);
+  transform: scale(1.15);
 }
 
 .photo-caption {
   margin-top: 0.65rem;
+  padding: 0 0.35rem;
   font-family: var(--font-meta);
   font-size: 0.75rem;
   font-style: italic;

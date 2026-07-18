@@ -1,0 +1,95 @@
+---
+interface Photo {
+  src: string;
+  alt?: string;
+  caption?: string;
+}
+
+interface Props {
+  photos: Photo[];
+  label?: string;
+}
+
+const { photos, label = 'Photos' } = Astro.props;
+const uid = `carousel-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+{
+  photos.length > 0 && (
+    <div class="photo-carousel" data-carousel={uid} aria-label={label}>
+      <div class="photo-carousel__viewport" data-carousel-track tabindex="0">
+        {photos.map((photo, index) => (
+          <figure class="photo-carousel__slide" data-index={index}>
+            <div class="photo-carousel__frame">
+              <img
+                src={photo.src}
+                alt={photo.alt || ''}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                draggable="false"
+              />
+            </div>
+            {photo.caption && (
+              <figcaption class="photo-caption">{photo.caption}</figcaption>
+            )}
+          </figure>
+        ))}
+      </div>
+
+      {photos.length > 1 && (
+        <div class="photo-carousel__dots" role="tablist" aria-label="Choose photo">
+          {photos.map((_, index) => (
+            <button
+              type="button"
+              class:list={['photo-carousel__dot', { 'is-active': index === 0 }]}
+              data-carousel-dot={index}
+              aria-label={`Show photo ${index + 1} of ${photos.length}`}
+              aria-current={index === 0 ? 'true' : 'false'}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+<script>
+  function initCarousel(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>('[data-carousel-track]');
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-carousel-dot]')];
+    if (!track || dots.length === 0) return;
+
+    const slides = [...track.querySelectorAll<HTMLElement>('.photo-carousel__slide')];
+
+    function setActive(index: number) {
+      dots.forEach((dot, i) => {
+        const on = i === index;
+        dot.classList.toggle('is-active', on);
+        dot.setAttribute('aria-current', on ? 'true' : 'false');
+      });
+    }
+
+    function nearestIndex() {
+      const width = track!.clientWidth || 1;
+      return Math.max(0, Math.min(slides.length - 1, Math.round(track!.scrollLeft / width)));
+    }
+
+    track.addEventListener(
+      'scroll',
+      () => {
+        setActive(nearestIndex());
+      },
+      { passive: true },
+    );
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const index = Number(dot.dataset.carouselDot || 0);
+        const width = track.clientWidth;
+        track.scrollTo({ left: width * index, behavior: 'smooth' });
+        setActive(index);
+      });
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach(initCarousel);
+</script>
