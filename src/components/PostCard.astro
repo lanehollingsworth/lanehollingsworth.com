@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import type { Post } from '../lib/posts';
 import { formatPostDate, monthKey } from '../lib/posts';
+import PhotoCarousel from './PhotoCarousel.astro';
 
 interface Props {
   post: Post;
@@ -9,6 +10,7 @@ interface Props {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const hasBody = Boolean(post.body?.trim());
 ---
 
 <article class="post" data-month={monthKey(post.data.pubDate)} id={post.id}>
@@ -36,20 +38,17 @@ const { Content } = await render(post);
       )
   }
 
-  <div class="post-content">
-    <Content />
-  </div>
+  {
+    hasBody && (
+      <div class="post-content">
+        <Content />
+      </div>
+    )
+  }
 
   {
     post.data.photos.length > 0 && (
-      <div class="post-photos">
-        {post.data.photos.map((photo) => (
-          <figure class="photo-frame">
-            <img src={photo.src} alt={photo.alt || post.data.title} loading="lazy" />
-            {photo.caption && <figcaption class="photo-caption">{photo.caption}</figcaption>}
-          </figure>
-        ))}
-      </div>
+      <PhotoCarousel photos={post.data.photos} label={`Photos for ${post.data.title}`} />
     )
   }
 </article>
