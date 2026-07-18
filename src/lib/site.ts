@@ -1,7 +1,8 @@
 export const site = {
   name: 'Lane Hollingsworth',
   url: 'https://lanehollingsworth.com',
-  description: 'Lane Hollingsworth',
+  description:
+    'Life updates, adventures, and things I’m learning. Lane Hollingsworth’s corner of the internet.',
   author: 'Lane Hollingsworth',
   email: 'lane.hollingsworth@gmail.com',
   locale: 'en_US',
