@@ -39,6 +39,20 @@ When recommending changes, updates, or process:
 - Don’t put posts only in a remote CMS without a git backup.
 - Don’t optimize for “admin dashboard nostalgia” at the cost of durability — unless Lane wants a private write UI *with* git as source of truth.
 
+## Publishing (git is truth)
+
+Three private front doors, one path into git → Vercel redeploy. Details in `PUBLISHING.md`.
+
+| Front door | URL | Auth |
+|------------|-----|------|
+| Write page | `/write` | `WRITE_PASSWORD` |
+| iOS Shortcut | `POST /api/publish` | same password |
+| Decap CMS | `/admin/` | GitHub OAuth |
+
+Required Vercel env vars: `WRITE_PASSWORD`, `GITHUB_TOKEN`, `GITHUB_REPO`, `OAUTH_GITHUB_CLIENT_ID`, `OAUTH_GITHUB_CLIENT_SECRET`.
+
+`/write` and `/admin` are private tooling (noindex) — exceptions to the single public page rule.
+
 ## Dev
 
 ```bash

@@ -73,6 +73,8 @@ const canonical = new URL(canonicalPath, site.url).toString();
       description: site.description,
     })} />
 
+    <slot name="head" />
+
     {
       import.meta.env.PROD && (
         <>
