@@ -89,6 +89,8 @@ export function loadProject({ overrides = {}, programId = null } = {}) {
     canonicalState: core['canonical-state'],
     verification: core.verification,
     capabilities: core.capabilities,
+    autonomy: core.autonomy,
+    sensors: core.sensors,
     canonical: core['canonical-records'],
     decisions: core.decisions,
     // Life domains that outlive any one program

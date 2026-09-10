@@ -1,34 +1,34 @@
 {
   "runs": {
     "model.core": {
-      "run_id": "run_20260910203220",
-      "verified_at": "2026-09-10T20:32:21.434Z",
+      "run_id": "run_20260910203826",
+      "verified_at": "2026-09-10T20:38:26.692Z",
       "status": "VERIFIED",
       "achieved_level": 3,
       "required_level": 2,
       "method": "acceptance_test",
-      "source_fingerprint": "89457e695cd02f2e",
-      "source_file_count": 50,
+      "source_fingerprint": "06b9b849369b5f16",
+      "source_file_count": 53,
       "evidence": [
         {
           "type": "command_execution",
-          "command": "node --test (5 files)",
+          "command": "node --test (6 files)",
           "exit_code": 0,
           "passed": true
         },
         {
           "type": "acceptance_test",
           "name": "suite",
-          "passed_count": 51,
+          "passed_count": 58,
           "failed_count": 0,
           "passed": true
         }
       ],
-      "summary": "51 test(s) passed, 0 failed"
+      "summary": "58 test(s) passed, 0 failed"
     },
     "calc.move_budget": {
-      "run_id": "run_20260910203220",
-      "verified_at": "2026-09-10T20:32:21.473Z",
+      "run_id": "run_20260910203826",
+      "verified_at": "2026-09-10T20:38:26.712Z",
       "status": "VERIFIED",
       "achieved_level": 2,
       "required_level": 2,
@@ -104,8 +104,8 @@
       "summary": "8/8 locked figures reproduced"
     },
     "engine.timeline": {
-      "run_id": "run_20260910203220",
-      "verified_at": "2026-09-10T20:32:21.479Z",
+      "run_id": "run_20260910203826",
+      "verified_at": "2026-09-10T20:38:26.716Z",
       "status": "VERIFIED",
       "achieved_level": 2,
       "required_level": 2,
@@ -173,8 +173,8 @@
       "summary": "3 scenario(s) checked"
     },
     "model.canonical_state": {
-      "run_id": "run_20260910203220",
-      "verified_at": "2026-09-10T20:32:21.483Z",
+      "run_id": "run_20260910203826",
+      "verified_at": "2026-09-10T20:38:26.718Z",
       "status": "VERIFIED",
       "achieved_level": 2,
       "required_level": 2,
@@ -200,13 +200,13 @@
       "summary": "50 records, 0 violations"
     },
     "cli.commands": {
-      "run_id": "run_20260910203220",
-      "verified_at": "2026-09-10T20:32:22.099Z",
+      "run_id": "run_20260910203826",
+      "verified_at": "2026-09-10T20:38:27.347Z",
       "status": "VERIFIED",
       "achieved_level": 3,
       "required_level": 3,
       "method": "real_command_execution",
-      "source_fingerprint": "2c1aa7e7ba9fb00f",
+      "source_fingerprint": "15e70883c70ce9d8",
       "source_file_count": 11,
       "evidence": [
         {

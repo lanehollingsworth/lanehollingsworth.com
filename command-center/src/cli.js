@@ -578,6 +578,15 @@ function renderRules(project, args) {
   }
   out(`\n  ${project.rules.authority_rule}`);
 
+  out(subheading('Capability authority - autonomy is granted, not assumed'));
+  out(table(project.autonomy.grants, [
+    { header: 'Capability', value: (r) => r.capability },
+    { header: 'Action', value: (r) => r.action },
+    { header: 'Authority', value: (r) => r.authority },
+  ]));
+  out(`  Lane only: ${project.autonomy.lane_only_actions.map((a) => a.label).join('; ')}.`);
+  out(`  ${project.autonomy.recommendation_rule}`);
+
   const simulation = simulateProgramCompletion(project, project.program.id, { asOf });
   out(subheading(`If ${simulation.program} completed today`));
   out(`  ${simulation.retires.length} rule(s) would retire: ${simulation.retires.join(', ')}`);

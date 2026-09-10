@@ -11,9 +11,16 @@
         "required_level": 2,
         "method": "acceptance_test",
         "runner": "tests",
-        "expected": ["every test file passes", "zero failures"]
+        "expected": [
+          "every test file passes",
+          "zero failures"
+        ]
       },
-      "invalidated_by": ["src/**/*.js", "tests/**/*.js", "data/**/*.json"]
+      "invalidated_by": [
+        "src/**/*.js",
+        "tests/**/*.js",
+        "data/**/*.json"
+      ]
     },
     {
       "id": "calc.move_budget",
@@ -25,18 +32,58 @@
         "required_level": 2,
         "method": "known_answer_test",
         "runner": "known_answers",
-        "expected": ["locked figures reproduce exactly", "category classification holds"]
+        "expected": [
+          "locked figures reproduce exactly",
+          "category classification holds"
+        ]
       },
-      "invalidated_by": ["src/calculators/*.js", "src/lib/expr.js", "data/programs/california_move/budget.json", "data/programs/california_move/assumptions.json"],
+      "invalidated_by": [
+        "src/calculators/*.js",
+        "src/lib/expr.js",
+        "data/programs/california_move/budget.json",
+        "data/programs/california_move/assumptions.json"
+      ],
       "known_answers": [
-        { "id": "roadtrip.total", "label": "Road trip total", "expected": 2569.17 },
-        { "id": "common.liquidity", "label": "Common physical move", "expected": 14019.17 },
-        { "id": "sell.liquidity", "label": "Base transition (sell branch)", "expected": 19153.71 },
-        { "id": "rent.liquidity", "label": "Rent branch liquidity", "expected": 31153.71 },
-        { "id": "rent.reserve", "label": "Landlord reserve stays reserve capital", "expected": 12000 },
-        { "id": "sell.net_cost", "label": "Lane net cost, sell branch", "expected": 14453.71 },
-        { "id": "house.break_even_rent", "label": "Break-even rent", "expected": 3698.13 },
-        { "id": "house.guardrail_rent", "label": "Rent clearing the $350 guardrail", "expected": 3249.41 }
+        {
+          "id": "roadtrip.total",
+          "label": "Road trip total",
+          "expected": 2569.17
+        },
+        {
+          "id": "common.liquidity",
+          "label": "Common physical move",
+          "expected": 14019.17
+        },
+        {
+          "id": "sell.liquidity",
+          "label": "Base transition (sell branch)",
+          "expected": 19153.71
+        },
+        {
+          "id": "rent.liquidity",
+          "label": "Rent branch liquidity",
+          "expected": 31153.71
+        },
+        {
+          "id": "rent.reserve",
+          "label": "Landlord reserve stays reserve capital",
+          "expected": 12000
+        },
+        {
+          "id": "sell.net_cost",
+          "label": "Lane net cost, sell branch",
+          "expected": 14453.71
+        },
+        {
+          "id": "house.break_even_rent",
+          "label": "Break-even rent",
+          "expected": 3698.13
+        },
+        {
+          "id": "house.guardrail_rent",
+          "label": "Rent clearing the $350 guardrail",
+          "expected": 3249.41
+        }
       ]
     },
     {
@@ -49,13 +96,45 @@
         "required_level": 2,
         "method": "acceptance_test",
         "runner": "timeline_scenarios",
-        "expected": ["feasible scenario reports slack", "short runway reports a deficit and remedies", "unsafe road-trip compression is never a remedy"]
+        "expected": [
+          "feasible scenario reports slack",
+          "short runway reports a deficit and remedies",
+          "unsafe road-trip compression is never a remedy"
+        ]
       },
-      "invalidated_by": ["src/planners/timeline.js", "data/programs/california_move/move-sequence.json"],
+      "invalidated_by": [
+        "src/planners/timeline.js",
+        "data/programs/california_move/move-sequence.json"
+      ],
       "scenarios": [
-        { "id": "nov18_feb2", "trigger": "2026-11-18", "report": "2027-02-02", "expect": { "feasible": true, "slack_days": 28, "earliest_possible_report_date": "2027-01-05" } },
-        { "id": "jan15_feb15", "trigger": "2027-01-15", "report": "2027-02-15", "expect": { "feasible": false, "shortfall_days": 17 } },
-        { "id": "no_report_date", "trigger": "2026-11-18", "report": null, "expect": { "feasible": true, "total_days_from_trigger": 48 } }
+        {
+          "id": "nov18_feb2",
+          "trigger": "2026-11-18",
+          "report": "2027-02-02",
+          "expect": {
+            "feasible": true,
+            "slack_days": 28,
+            "earliest_possible_report_date": "2027-01-05"
+          }
+        },
+        {
+          "id": "jan15_feb15",
+          "trigger": "2027-01-15",
+          "report": "2027-02-15",
+          "expect": {
+            "feasible": false,
+            "shortfall_days": 17
+          }
+        },
+        {
+          "id": "no_report_date",
+          "trigger": "2026-11-18",
+          "report": null,
+          "expect": {
+            "feasible": true,
+            "total_days_from_trigger": 48
+          }
+        }
       ]
     },
     {
@@ -68,9 +147,17 @@
         "required_level": 2,
         "method": "schema_validation",
         "runner": "canonical_validation",
-        "expected": ["zero rule violations", "contested records are not commitment-safe"]
+        "expected": [
+          "zero rule violations",
+          "contested records are not commitment-safe"
+        ]
       },
-      "invalidated_by": ["src/lib/canonical.js", "data/core/canonical-state.json", "data/core/canonical-records.json", "data/programs/california_move/contradictions.json"]
+      "invalidated_by": [
+        "src/lib/canonical.js",
+        "data/core/canonical-state.json",
+        "data/core/canonical-records.json",
+        "data/programs/california_move/contradictions.json"
+      ]
     },
     {
       "id": "cli.commands",
@@ -82,17 +169,86 @@
         "required_level": 3,
         "method": "real_command_execution",
         "runner": "cli_execution",
-        "expected": ["each command exits 0", "each command prints its declared marker"]
+        "expected": [
+          "each command exits 0",
+          "each command prints its declared marker"
+        ]
       },
-      "invalidated_by": ["src/cli.js", "src/reports/*.js", "src/lib/*.js"],
+      "invalidated_by": [
+        "src/cli.js",
+        "src/reports/*.js",
+        "src/lib/*.js"
+      ],
       "commands": [
-        { "argv": ["readiness"], "expect_stdout": ["Relocation readiness", "Liquidity required"] },
-        { "argv": ["attention"], "expect_stdout": ["deserve attention", "Intentionally deferred"] },
-        { "argv": ["rules"], "expect_stdout": ["Authority hierarchy", "would retire"] },
-        { "argv": ["budget", "--support", "movers_hotels_reimbursed"], "expect_stdout": ["front the cash", "Liquidity required"] },
-        { "argv": ["timeline", "--offer", "2026-11-18", "--report", "2027-02-02"], "expect_stdout": ["Earliest possible first office day", "Critical path"] },
-        { "argv": ["why", "career.cherie_role.title"], "expect_stdout": ["deliberately believes nothing", "Safe to act on irreversibly: NO"] },
-        { "argv": ["validate"], "expect_stdout": ["No violations"] }
+        {
+          "argv": [
+            "readiness"
+          ],
+          "expect_stdout": [
+            "Relocation readiness",
+            "Liquidity required"
+          ]
+        },
+        {
+          "argv": [
+            "attention"
+          ],
+          "expect_stdout": [
+            "deserve attention",
+            "Intentionally deferred"
+          ]
+        },
+        {
+          "argv": [
+            "rules"
+          ],
+          "expect_stdout": [
+            "Authority hierarchy",
+            "would retire"
+          ]
+        },
+        {
+          "argv": [
+            "budget",
+            "--support",
+            "movers_hotels_reimbursed"
+          ],
+          "expect_stdout": [
+            "front the cash",
+            "Liquidity required"
+          ]
+        },
+        {
+          "argv": [
+            "timeline",
+            "--offer",
+            "2026-11-18",
+            "--report",
+            "2027-02-02"
+          ],
+          "expect_stdout": [
+            "Earliest possible first office day",
+            "Critical path"
+          ]
+        },
+        {
+          "argv": [
+            "why",
+            "career.cherie_role.title"
+          ],
+          "expect_stdout": [
+            "deliberately believes nothing",
+            "Safe to act on irreversibly: NO"
+          ]
+        },
+        {
+          "argv": [
+            "validate"
+          ],
+          "expect_stdout": [
+            "No violations"
+          ]
+        }
       ]
     },
     {
@@ -113,9 +269,17 @@
           "write_count equals 0"
         ]
       },
-      "invalidated_by": ["src/integrations/sheets*.js"],
-      "blocked_on": ["Sheet ID", "OAuth client credentials (never committed)"],
-      "note": "Deterministic tests of a parser would not verify this claim. Level 4 requires reaching the real spreadsheet."
+      "invalidated_by": [
+        "src/integrations/sheets*.js",
+        "data/core/sensors.json"
+      ],
+      "blocked_on": [
+        "OAuth client credentials (env only, never committed)",
+        "A browser that can complete consent and reach the loopback redirect"
+      ],
+      "note": "Deterministic tests of a parser would not verify this claim. Level 4 requires reaching the real spreadsheet.",
+      "sensor": "sensor.google_sheets.command_center",
+      "authority": "auto"
     },
     {
       "id": "integration.sheets.write",
@@ -127,28 +291,64 @@
         "required_level": 4,
         "method": "pre_state_mutation_post_state",
         "runner": null,
-        "expected": ["pre-state captured", "explicit approval recorded", "mutation response received", "post-state re-read matches intent", "no unresolved conflict written as confirmed"]
+        "expected": [
+          "pre-state captured",
+          "explicit approval recorded",
+          "mutation response received",
+          "post-state re-read matches intent",
+          "no unresolved conflict written as confirmed"
+        ]
       },
-      "invalidated_by": ["src/integrations/sheets*.js"],
-      "blocked_on": ["integration.sheets.read verified first"]
+      "invalidated_by": [
+        "src/integrations/sheets*.js"
+      ],
+      "blocked_on": [
+        "integration.sheets.read verified first"
+      ],
+      "sensor": "sensor.google_sheets.command_center",
+      "authority": "approval_required"
     },
     {
       "id": "automation.daily_brief",
       "label": "Scheduled daily briefing",
       "claim": "scheduled_action_works",
       "state": "planned",
-      "verification": { "required": false, "required_level": 5, "method": "observed_scheduled_run", "runner": null, "expected": ["a scheduled run record exists", "expected output produced", "delivery confirmed"] },
+      "verification": {
+        "required": false,
+        "required_level": 5,
+        "method": "observed_scheduled_run",
+        "runner": null,
+        "expected": [
+          "a scheduled run record exists",
+          "expected output produced",
+          "delivery confirmed"
+        ]
+      },
       "invalidated_by": [],
-      "blocked_on": ["cross-domain attention arbitration"]
+      "blocked_on": [
+        "cross-domain attention arbitration"
+      ]
     },
     {
       "id": "research.live_inputs",
       "label": "Live research adapters (rents, fuel, hotels, quotes)",
       "claim": "integration_works",
       "state": "planned",
-      "verification": { "required": false, "required_level": 4, "method": "real_request", "runner": null, "expected": ["real provider response", "provider identifier and timestamp recorded", "freshness contract attached"] },
+      "verification": {
+        "required": false,
+        "required_level": 4,
+        "method": "real_request",
+        "runner": null,
+        "expected": [
+          "real provider response",
+          "provider identifier and timestamp recorded",
+          "freshness contract attached"
+        ]
+      },
       "invalidated_by": [],
-      "blocked_on": ["freshness/provenance contract for fetched data"]
+      "blocked_on": [
+        "freshness/provenance contract for fetched data"
+      ]
     }
   ]
 }

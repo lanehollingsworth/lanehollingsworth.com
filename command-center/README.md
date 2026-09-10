@@ -5,6 +5,11 @@ evidence-based model of goals, commitments, resources, projects, decisions,
 risks and opportunities; works out what deserves attention; protects explicit
 guardrails; and turns major life initiatives into executable plans.
 
+Architecture: [Platform Architecture v1](docs/PLATFORM-ARCHITECTURE.md) is the
+North Star, with [ADR-001](docs/ADR-001-lane-command-center.md) (platform vs
+program) and [ADR-002](docs/ADR-002-verification-contract.md) (proof over
+confidence) as the decisions that implement it.
+
 **California Move is its first production program**, not its identity — the
 decision engine, financial model and dated execution planner behind the move
 from Orlando to Los Angeles County. See
@@ -154,6 +159,8 @@ data/
     programs.json           the program registry and the life domains
     canonical-state.json    evidence / canonical / verification vocabularies
     verification.json       proof levels, claim-to-proof table, work-item lifecycle
+    autonomy.json           what the agent may do alone, and what is Lane's alone
+    sensors.json            declared external inputs, least-privilege scopes
     capabilities.json       every capability and the contract that would prove it
     canonical-records.json  contested or decision-bearing state
     decisions.json          decision memory

@@ -1,0 +1,32 @@
+{
+  "note": "Declared inputs from outside the model. Every sensor states its authority, its least-privilege scope, and where its configuration comes from. Configuration lives in the environment; this repository holds names, never values.",
+  "rules": [
+    "Least privilege: request the narrowest scope that satisfies the read, and never a broader one for convenience.",
+    "No secret, token, spreadsheet id or client credential is committed. A test enforces it.",
+    "A sensor's authority is granted in core/autonomy.json, not by the adapter that implements it.",
+    "Data arriving from a sensor is an observation with provenance and a retrieval time. It is never a verified fact by virtue of having been fetched."
+  ],
+  "sensors": [
+    {
+      "id": "sensor.google_sheets.command_center",
+      "label": "Lane California Move Command Center spreadsheet",
+      "kind": "google_sheets",
+      "state": "planned",
+      "authority": "read_only",
+      "auth": {
+        "method": "oauth",
+        "scopes": ["https://www.googleapis.com/auth/spreadsheets.readonly"],
+        "forbidden_scopes": ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.readonly", "https://www.googleapis.com/auth/spreadsheets"],
+        "scope_note": "spreadsheets.readonly reads only spreadsheets the account can already open. Drive-wide scopes are refused: the adapter never needs to enumerate or open other files.",
+        "token_location": "outside the repository, in the user config directory",
+        "config_env": ["LCC_GOOGLE_SHEET_ID", "LCC_GOOGLE_OAUTH_CLIENT_ID", "LCC_GOOGLE_OAUTH_CLIENT_SECRET"]
+      },
+      "capability": "integration.sheets.read",
+      "writes": "none",
+      "expected_tabs": ["Dashboard", "California Launch Fund", "Orlando Rent vs Sell", "House Repairs & HVAC", "Move Sell Store Donate", "CA Neighborhoods", "Rental Listings", "Community Anchors", "Disney Career", "Moving Logistics", "Tasks & Timeline", "California Life List", "Team Location Reference"],
+      "expected_tabs_evidence": "planning_assumption",
+      "expected_tabs_note": "Carried from the handoff document, never confirmed against the live spreadsheet. The first real read verifies or corrects this list; it is not treated as fact until then.",
+      "verification": "Level 4 only. A parser test against a fixture does not verify this sensor."
+    }
+  ]
+}
