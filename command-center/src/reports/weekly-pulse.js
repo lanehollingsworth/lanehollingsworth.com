@@ -4,6 +4,7 @@ import { diffSnapshot } from './snapshot.js';
 import { checkFreshness } from '../research/freshness.js';
 import { computeHouse } from '../calculators/house-rent-vs-sell.js';
 import { supersededHistory } from '../lib/canonical.js';
+import { attentionReport } from '../lib/attention.js';
 
 function upcoming(project, asOf, withinDays) {
   const items = [
@@ -19,7 +20,7 @@ function upcoming(project, asOf, withinDays) {
 
 /** The weekly relocation-readiness pulse. Short enough to act on, long enough to keep context. */
 export function buildPulse(project, { asOf, branch = 'house_sell', support = 'unknown' } = {}) {
-  const date = asOf ?? project.project.planning_date;
+  const date = asOf ?? project.program.planning_date;
   const readiness = buildReadiness(project, { branch, support, asOf: date });
   const diff = diffSnapshot(project);
   const freshness = checkFreshness(project, { asOf: date });
@@ -58,7 +59,8 @@ export function buildPulse(project, { asOf, branch = 'house_sell', support = 'un
     deadlines_14: upcoming(project, date, 14),
     deadlines_30: upcoming(project, date, 30),
     top_actions: actionable.slice(0, 3),
-    intentionally_not_yet: project.project.blocked_until_trigger.slice(0, 4),
+    intentionally_not_yet: project.program.deferred_actions.slice(0, 4),
+    attention: attentionReport(project, { asOf: date }),
     risks_live: project.risks.risks.filter((r) => r.status === 'realized' || r.status === 'likely_realized_under_current_assumptions'),
     waiting_on: waitingOn,
     decision_needed: readiness.pending_resolution.map((item) => ({

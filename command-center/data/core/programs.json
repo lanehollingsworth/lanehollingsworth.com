@@ -1,0 +1,72 @@
+{
+  "note": "Lane Command Center is the platform; a program is one major initiative running on it. Core objects - Task, Decision, Risk, Question, Assumption, Milestone, Rule - are generic and carry a program tag. Nothing is named MoveTask.",
+  "statuses": {
+    "proposed": "Under consideration, not yet running.",
+    "active": "Running. Its rules are live and its tasks compete for attention.",
+    "paused": "Deliberately dormant. Rules stay recorded but do not fire.",
+    "complete": "Finished. Program-scoped rules retire; decisions and evidence are kept as history.",
+    "abandoned": "Stopped without completing. Same retirement behavior as complete, different meaning."
+  },
+  "programs": [
+    {
+      "id": "california_move",
+      "name": "California Move",
+      "status": "active",
+      "data_path": "programs/california_move",
+      "note": "The first production program on the Command Center."
+    }
+  ],
+  "domains": [
+    {
+      "id": "career",
+      "label": "Career",
+      "outlives_programs": true
+    },
+    {
+      "id": "finance",
+      "label": "Personal finance",
+      "outlives_programs": true
+    },
+    {
+      "id": "home",
+      "label": "Home / property",
+      "outlives_programs": true
+    },
+    {
+      "id": "vehicles",
+      "label": "Vehicles",
+      "outlives_programs": true
+    },
+    {
+      "id": "pets",
+      "label": "Klein and Tilly",
+      "outlives_programs": true
+    },
+    {
+      "id": "community",
+      "label": "Community and social life",
+      "outlives_programs": true
+    },
+    {
+      "id": "benefits",
+      "label": "Benefits and administration",
+      "outlives_programs": true
+    },
+    {
+      "id": "household",
+      "label": "Household",
+      "outlives_programs": true
+    },
+    {
+      "id": "modeling",
+      "label": "How the model itself must behave",
+      "outlives_programs": true
+    }
+  ],
+  "not_built_yet": [
+    "Cross-domain attention arbitration (which ACT_NOW item actually gets today).",
+    "Calendar, energy and capacity modeling.",
+    "Routines as a first-class object.",
+    "Any second program."
+  ]
+}

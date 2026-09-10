@@ -55,18 +55,20 @@ Required Vercel env vars: `WRITE_PASSWORD`, `GITHUB_TOKEN`, `GITHUB_REPO`, `OAUT
 
 ## Command Center (not part of the site)
 
-`command-center/` is private relocation planning tooling — a decision engine, financial model and dated execution planner for the Orlando → Los Angeles move. It renders no pages, adds no dependencies, and `astro build` never touches it.
+`command-center/` is Lane Command Center: private tooling that maintains an evidence-based model of goals, commitments, resources, decisions, risks and attention. **California Move is its first program, not its identity** — see `command-center/docs/ADR-001-lane-command-center.md`. It renders no pages, adds no dependencies, and `astro build` never touches it.
 
 ```bash
 npm run cc -- readiness      # gate-aware status
 npm run cc -- pulse          # weekly relocation-readiness pulse
+npm run cc -- attention      # what deserves attention today, and what deliberately does not
+npm run cc -- rules          # rule lifecycles, authority, what a program completion retires
 npm run cc -- why <id>       # why the model believes a value
 npm run cc -- validate       # canonical-state rule check
 npm run cc -- help           # everything else
 npm run cc:test              # Phase 1 acceptance tests
 ```
 
-Rules that live in code there and should not be softened: liquidity is never reported as cost, employer relocation coverage is never assumed in either direction, unpriced items stay out of every total, windfalls stay out of the base case, and recruiting threads are never merged. State carries three orthogonal fields — `evidence_type` (what kind of evidence), `canonical_state` (what role it plays now), `verification_state` (confirmed by anyone outside) — and collapsing them is a regression, not a cleanup. Details in `command-center/README.md`.
+Rules that live in code there and should not be softened: liquidity is never reported as cost, employer relocation coverage is never assumed in either direction, unpriced items stay out of every total, windfalls stay out of the base case, and recruiting threads are never merged. Core objects stay generic (Task, Decision, Risk, Rule) with `program` and `domain` tags — never `MoveTask`. Rules retire with the program that owns them; enduring preferences do not. An inference may raise a review trigger, never overrule a decision. State carries three orthogonal fields — `evidence_type` (what kind of evidence), `canonical_state` (what role it plays now), `verification_state` (confirmed by anyone outside) — and collapsing them is a regression, not a cleanup. Details in `command-center/README.md`.
 
 ## Dev
 

@@ -6,8 +6,13 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 export const DATA_DIR = join(HERE, '..', '..', 'data');
 export const OUTPUT_DIR = join(HERE, '..', '..', 'outputs');
 
-function readJson(name) {
-  return JSON.parse(readFileSync(join(DATA_DIR, name), 'utf8'));
+/** Reads every .json in a directory into a map keyed by basename. */
+function readDir(dir) {
+  return Object.fromEntries(
+    readdirSync(dir)
+      .filter((file) => file.endsWith('.json'))
+      .map((file) => [file.replace(/\.json$/, ''), JSON.parse(readFileSync(join(dir, file), 'utf8'))]),
+  );
 }
 
 /**
@@ -38,12 +43,19 @@ export function normalizeAssumption(record) {
  * data file; it is recorded as a session-scoped provenance entry so a report
  * can always say which numbers were not the committed ones.
  */
-export function loadProject({ overrides = {} } = {}) {
-  const files = readdirSync(DATA_DIR).filter((f) => f.endsWith('.json'));
-  const raw = Object.fromEntries(files.map((f) => [f.replace(/\.json$/, ''), readJson(f)]));
+export function loadProject({ overrides = {}, programId = null } = {}) {
+  const core = readDir(join(DATA_DIR, 'core'));
+  const registry = core.programs;
+  const active = programId
+    ? registry.programs.find((p) => p.id === programId)
+    : registry.programs.find((p) => p.status === 'active');
+  if (!active) {
+    throw new Error(programId ? `No program "${programId}" in core/programs.json.` : 'No active program in core/programs.json.');
+  }
+  const program = readDir(join(DATA_DIR, active.data_path));
 
   const assumptions = new Map();
-  for (const assumption of raw.assumptions.assumptions) {
+  for (const assumption of program.assumptions.assumptions) {
     assumptions.set(assumption.id, normalizeAssumption(assumption));
   }
 
@@ -51,7 +63,7 @@ export function loadProject({ overrides = {} } = {}) {
   for (const [id, value] of Object.entries(overrides)) {
     const existing = assumptions.get(id);
     if (!existing) {
-      throw new Error(`Cannot override unknown assumption "${id}". Add it to data/assumptions.json first.`);
+      throw new Error(`Cannot override unknown assumption "${id}". Add it to the program's assumptions.json first.`);
     }
     appliedOverrides.push({ id, from: existing.value, to: value });
     assumptions.set(id, {
@@ -69,28 +81,34 @@ export function loadProject({ overrides = {} } = {}) {
   const scope = Object.fromEntries([...assumptions.values()].map((a) => [a.id, a.value]));
 
   return {
-    project: raw.project,
+    // Platform
+    programs: registry,
+    program: program.program,
+    rules: core.rules,
+    actionStates: core['action-states'],
+    canonicalState: core['canonical-state'],
+    canonical: core['canonical-records'],
+    decisions: core.decisions,
+    // Life domains that outlive any one program
+    career: core.career,
+    finance: core.finance,
+    house: core.house,
+    assets: core.assets,
+    benefits: core.benefits,
+    community: core.community,
+    neighborhoods: core.neighborhoods,
+    // The active program's own state
     assumptions,
     scope,
     overrides: appliedOverrides,
-    budget: raw.budget,
-    house: raw.house,
-    career: raw.career,
-    finance: raw.finance,
-    tasks: raw.tasks,
-    questions: raw.questions,
-    risks: raw.risks,
-    contradictions: raw.contradictions,
-    neighborhoods: raw.neighborhoods,
-    community: raw.community,
-    benefits: raw.benefits,
-    readiness: raw.readiness,
-    canonical: raw['canonical-records'],
-    canonicalState: raw['canonical-state'],
-    decisions: raw.decisions,
-    moveSequence: raw['move-sequence'],
-    roadtrip: raw.roadtrip,
-    assets: raw.assets,
+    budget: program.budget,
+    tasks: program.tasks,
+    questions: program.questions,
+    risks: program.risks,
+    contradictions: program.contradictions,
+    readiness: program.readiness,
+    moveSequence: program['move-sequence'],
+    roadtrip: program.roadtrip,
   };
 }
 

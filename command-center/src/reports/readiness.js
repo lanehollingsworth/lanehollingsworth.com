@@ -72,7 +72,7 @@ export function buildReadiness(project, { branch = 'house_sell', support = 'unkn
     stale_inputs: freshness.stale.length,
     unpriced_items: budget.unpriced.length,
     top_questions: rankQuestions(project).rows.slice(0, 3),
-    blocked_actions: project.project.blocked_until_trigger,
+    blocked_actions: project.program.deferred_actions,
     pending_resolution: pendingResolution(project),
     recurring_delta: round2(house.recurring_monthly_delta[branch].delta),
   };

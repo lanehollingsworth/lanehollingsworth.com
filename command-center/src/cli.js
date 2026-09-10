@@ -13,6 +13,8 @@ import { buildReadiness } from './reports/readiness.js';
 import { buildPulse } from './reports/weekly-pulse.js';
 import { saveSnapshot, diffSnapshot } from './reports/snapshot.js';
 import { validateCanonical, pendingResolution, supersededHistory, explain, stateNodes } from './lib/canonical.js';
+import { activeRules, retiredRules, simulateProgramCompletion, ruleStatus } from './lib/rules.js';
+import { attentionReport } from './lib/attention.js';
 
 function parseArgs(argv) {
   const args = { _: [], set: [] };
@@ -252,7 +254,7 @@ function renderReadiness(project, args) {
   out(subheading('Three highest-value unresolved inputs'));
   for (const q of readiness.top_questions) out(`  ${q.priority}  ${q.id} - ${q.question}`);
   out(subheading('Intentionally blocked until a trigger exists'));
-  for (const action of readiness.blocked_actions) out(`  - ${action.action} (unblocked by ${action.unblocked_by}): ${action.reason}`);
+  for (const action of readiness.blocked_actions) out(`  - ${action.action} (revisit at ${action.revisit_trigger}): ${action.deferral_reason}`);
   if (readiness.pending_resolution.length) {
     out(subheading('Unsettled state - what each one needs'));
     for (const item of readiness.pending_resolution) {
@@ -300,7 +302,7 @@ function renderPulse(project, args) {
   for (const task of pulse.top_actions) out(`  - ${task.label}${task.due ? ` (due ${task.due})` : ''}`);
 
   out(subheading('8. Things intentionally NOT to do yet'));
-  for (const item of pulse.intentionally_not_yet) out(`  - ${item.action}: ${item.reason}`);
+  for (const item of pulse.intentionally_not_yet) out(`  - ${item.action}: ${item.deferral_reason}`);
 
   out(subheading('9. Live risks'));
   for (const risk of pulse.risks_live) out(`  - [${risk.id}] ${risk.risk} - ${risk.mitigation}`);
@@ -446,11 +448,11 @@ function renderValidate(project) {
 
 function renderBlocked(project) {
   out(heading('Actions intentionally blocked until a trigger exists'));
-  for (const item of project.project.blocked_until_trigger) {
-    out(`  - ${item.action}\n      unblocked by: ${item.unblocked_by}\n      why: ${item.reason}`);
+  for (const item of project.program.deferred_actions) {
+    out(`  - ${item.action}\n      revisit when: ${item.revisit_trigger}\n      why: ${item.deferral_reason}`);
   }
   out(subheading('Gate states'));
-  for (const gate of project.project.gates) out(`  ${gate.id.padEnd(7)} ${gate.name.padEnd(32)} ${gate.state}`);
+  for (const gate of project.program.gates) out(`  ${gate.id.padEnd(7)} ${gate.name.padEnd(32)} ${gate.state}`);
 }
 
 function renderOfferDay(project, args) {
@@ -509,6 +511,95 @@ function renderOfferDay(project, args) {
   out('  - Every irreversible step listed above.');
 }
 
+function renderAttention(project, args) {
+  const report = attentionReport(project, { asOf: args['as-of'] ?? null });
+  out(heading(`What deserves attention - ${report.date}`));
+  out(`  ${report.summary}`);
+
+  out(subheading(`Needs attention now (${report.needs_attention.length})`));
+  for (const item of report.needs_attention) {
+    out(`  [${item.action_state}] ${item.label}`);
+    out(`      ${item.domain}${item.due ? ` - due ${item.due} (T+${item.in_days})` : ''}${item.routine_candidate ? ' - recurring' : ''}`);
+  }
+
+  out(subheading(`Waiting on someone else (${report.waiting_on.length})`));
+  for (const item of report.waiting_on) out(`  - ${item.label} - ${item.external_party}`);
+
+  out(subheading(`Scheduled (${report.scheduled.length})`));
+  for (const item of report.scheduled) out(`  - ${item.due ?? 'no date'}  ${item.label}`);
+
+  out(subheading(`Watching - no action needed (${report.watching.length})`));
+  for (const item of report.watching) out(`  - ${item.label}${item.note ? ` - ${item.note}` : ''}`);
+
+  out(subheading(`Intentionally deferred (${report.deferred.length})`));
+  out('  These are decisions, not backlog. Each one has a reason and a trigger.');
+  for (const item of report.deferred) {
+    out(`  - ${item.label}`);
+    out(`      why not now:  ${item.deferral_reason}`);
+    out(`      revisit when: ${item.revisit_trigger}`);
+  }
+
+  if (report.blocked.length) {
+    out(subheading(`Blocked (${report.blocked.length})`));
+    for (const item of report.blocked) out(`  - ${item.label} - blocked by ${(item.blocked_by ?? []).join(', ')}`);
+  }
+
+  if (report.violations.length) {
+    out(subheading('Vocabulary violations'));
+    for (const violation of report.violations) out(`  ! ${violation.id} is ${violation.action_state} without ${violation.missing}`);
+  }
+
+  out(subheading('Limits of this report'));
+  for (const limit of report.limits) out(`  - ${limit}`);
+}
+
+function renderRules(project, args) {
+  const asOf = args['as-of'] ?? null;
+  const active = activeRules(project, { asOf });
+  const retired = retiredRules(project, { asOf });
+
+  out(heading('Rules, guardrails and preferences'));
+  out(table(active, [
+    { header: 'Id', value: (r) => r.id },
+    { header: 'Lifecycle', value: (r) => r.lifecycle },
+    { header: 'Scope', value: (r) => r.owner_scope },
+    { header: 'Retires when', value: (r) => r.expires_when ?? 'never' },
+  ]));
+
+  if (retired.length) {
+    out(subheading(`Retired (${retired.length})`));
+    for (const rule of retired) out(`  - ${rule.id}: ${rule.retirement_reason}`);
+  }
+
+  out(subheading('Authority hierarchy'));
+  for (const level of project.rules.authority_hierarchy) {
+    out(`  ${level.level}. ${level.label}${level.note ? ` - ${level.note}` : ''}`);
+  }
+  out(`\n  ${project.rules.authority_rule}`);
+
+  const simulation = simulateProgramCompletion(project, project.program.id, { asOf });
+  out(subheading(`If ${simulation.program} completed today`));
+  out(`  ${simulation.retires.length} rule(s) would retire: ${simulation.retires.join(', ')}`);
+  out(`  ${simulation.survives.length} would survive, including every enduring preference.`);
+  out(`  ${simulation.note}`);
+}
+
+function renderProgram(project) {
+  const program = project.program;
+  out(heading(`${program.name} - ${program.status}`));
+  out(`  ${program.north_star}`);
+  out(subheading('Where this sits'));
+  out(`  ${project.programs.note}`);
+  out(`  Programs: ${project.programs.programs.map((p) => `${p.id} (${p.status})`).join(', ')}`);
+  out(`  Domains:  ${project.programs.domains.map((d) => d.id).join(', ')}`);
+  out(subheading('Completion criteria'));
+  for (const criterion of program.completion_criteria) out(`  [ ] ${criterion}`);
+  out(subheading('On completion'));
+  for (const step of program.on_completion) out(`  - ${step}`);
+  out(subheading('Not built yet'));
+  for (const gap of project.programs.not_built_yet) out(`  - ${gap}`);
+}
+
 const COMMANDS = {
   budget: renderBudget,
   roadtrip: renderRoadTrip,
@@ -522,6 +613,9 @@ const COMMANDS = {
   pulse: renderPulse,
   contradictions: renderContradictions,
   canonical: renderCanonical,
+  attention: renderAttention,
+  rules: renderRules,
+  program: renderProgram,
   why: renderWhy,
   decisions: renderDecisions,
   validate: renderValidate,

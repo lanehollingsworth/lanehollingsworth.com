@@ -108,12 +108,16 @@ test('"What are the three highest-value unresolved inputs right now?"', () => {
 });
 
 test('"What actions are intentionally blocked until an offer/approval exists?"', () => {
-  const blocked = base.project.blocked_until_trigger;
+  // These moved onto the program record in the platform split and now carry an
+  // action_state, a deferral reason and a revisit trigger.
+  const blocked = base.program.deferred_actions;
   const lease = blocked.find((b) => b.action.includes('lease'));
-  assert.equal(lease.unblocked_by, 'gate_3');
-  assert.ok(blocked.some((b) => b.action.includes('List the Orlando house') && b.unblocked_by === 'gate_1'));
-  assert.ok(blocked.some((b) => b.action.includes('waive relocation support') && b.unblocked_by === 'never'));
+  assert.equal(lease.revisit_trigger, 'gate_3');
+  assert.equal(lease.action_state, 'INTENTIONALLY_DEFERRED');
+  assert.ok(blocked.some((b) => b.action.includes('List the Orlando house') && b.revisit_trigger === 'gate_1'));
+  assert.ok(blocked.some((b) => b.action.includes('waive relocation support') && b.revisit_trigger === 'never'));
   assert.ok(blocked.some((b) => b.action.includes('Sell the Tundra')));
+  assert.ok(blocked.every((b) => b.deferral_reason && b.revisit_trigger));
 });
 
 test('"What changed from the previous plan?"', () => {

@@ -1,7 +1,15 @@
-# California Move Command Center
+# Lane Command Center
 
-A stateful relocation operating system: the decision engine, financial model and
-dated execution planner behind the move from Orlando to Los Angeles County.
+A stateful personal decision and execution system: it maintains an
+evidence-based model of goals, commitments, resources, projects, decisions,
+risks and opportunities; works out what deserves attention; protects explicit
+guardrails; and turns major life initiatives into executable plans.
+
+**California Move is its first production program**, not its identity — the
+decision engine, financial model and dated execution planner behind the move
+from Orlando to Los Angeles County. See
+[ADR-001](docs/ADR-001-lane-command-center.md) for why those are two different
+things.
 
 This is **private planning tooling that happens to live in this repo**. It is not
 part of lanehollingsworth.com, it renders no pages, it ships no routes, and it
@@ -18,7 +26,7 @@ So the responsibilities are split the way a product team would split them:
 
 | Layer | Lives in | Job |
 |---|---|---|
-| Machine source of truth | `data/*.json` | Facts, assumptions, formulas, provenance |
+| Machine source of truth | `data/core/` + `data/programs/<id>/` | Facts, assumptions, formulas, provenance |
 | Calculation | `src/calculators/`, `src/planners/` | Derive every number, every time |
 | Human dashboard | the Google Sheet | Read, edit, share |
 | Evidence | quotes, CMAs, inspections | Promote assumptions to verified facts |
@@ -95,6 +103,72 @@ These are enforced in code and data, not in good intentions:
 - **A short runway is reported, not compressed.** If the required report date is
   earlier than the sequence allows, the timeline says "short by N days" and lists
   remedies — none of which is "drive longer days with the dogs."
+
+## Platform and program
+
+```
+data/
+  core/                     what outlives any one initiative
+    rules.json              rules with lifecycles + the authority hierarchy
+    action-states.json      what kind of attention a thing deserves, including none
+    programs.json           the program registry and the life domains
+    canonical-state.json    evidence / canonical / verification vocabularies
+    canonical-records.json  contested or decision-bearing state
+    decisions.json          decision memory
+    career, finance, house, assets, benefits, community, neighborhoods
+  programs/
+    california_move/        north star, gates, budget, sequence, tasks, risks,
+                            questions, assumptions, readiness, road trip
+```
+
+Core object types are generic — Task, Decision, Risk, Question, Assumption,
+Rule — and carry `program` and `domain` tags. Nothing is named `MoveTask`. The
+*calculators* stay program-specific on purpose: `move-budget.js`,
+`road-trip.js` and `house-rent-vs-sell.js` are relocation logic, not platform.
+
+```bash
+npm run cc -- program      # the active program, its completion criteria, platform context
+npm run cc -- rules        # rules, lifecycles, authority, and what a completion would retire
+npm run cc -- attention    # what deserves attention today - and what deliberately does not
+```
+
+### Rules retire with what they belonged to
+
+Every rule declares a lifecycle and a scope. `simulateProgramCompletion()`
+answers what would happen the day California Move is marked complete:
+
+```
+If california_move completed today
+  5 rule(s) would retire: guard.emergency_fund, guard.no_assumed_relocation_support,
+    guard.march_is_a_star, guard.arrival_grace, review.ca_housing_permanence
+  14 would survive, including every enduring preference.
+```
+
+Enduring preferences (dogs are never cargo, preserve financial optionality),
+domain guardrails and the decision log belong to Lane, not to the program.
+
+### Authority
+
+Lane's explicit instruction → active guardrail or approved decision → verified
+external fact → current project state → historical pattern → planning
+assumption → agent inference. Conflicts are reported, never silently resolved.
+An inference that contradicts a decision produces a **review trigger**, not a
+reversal — `inferenceChallenge()` cannot return an override.
+
+### Attention, including the decision not to act
+
+Ten action states, of which seven are quiet. `INTENTIONALLY_DEFERRED` requires
+a reason and a revisit trigger, so deferral reads as a decision rather than as
+backlog:
+
+```
+10 thing(s) deserve attention. 4 being watched, 1 waiting on someone else,
+9 intentionally deferred.
+```
+
+What is deliberately *not* implemented: deciding which of three ACT_NOW items
+actually gets a given Tuesday. That needs calendar, capacity and energy
+modeling. The report says so rather than pretending.
 
 ## Canonical state: three questions, three fields
 
@@ -192,7 +266,10 @@ rent-vs-sell liquidity, the Nov 18 → Feb 2 timeline, staleness, the top three
 unresolved inputs, blocked actions, what changed, and which records conflict.
 `tests/model.test.js` locks the arithmetic to the figures the command center
 already publishes, so a refactor that quietly changes a total fails loudly.
-`tests/canonical.test.js` covers the Phase 2 state semantics: superseded values
+`tests/platform.test.js` locks the platform/program separation: a completed
+program retires its own rules and nothing else, rules expire by date as well as
+by scope, an inference cannot overrule a decision, and no core type is named
+after the move. `tests/canonical.test.js` covers the Phase 2 state semantics: superseded values
 do not become open decisions, conflicting sources stay unresolved, the evidence
 vocabulary still drives freshness, overrides keep prior provenance, and the
 validator actually bites.
