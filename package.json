@@ -14,7 +14,8 @@
     "dns:squarespace": "node scripts/set-squarespace-dns.mjs",
     "dns:check": "node scripts/set-squarespace-dns.mjs --check-only",
     "cc": "node command-center/src/cli.js",
-    "cc:test": "node --test command-center/tests/*.test.js"
+    "cc:test": "node --test command-center/tests/*.test.js",
+    "cc:verify": "node command-center/src/cli.js verify"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",

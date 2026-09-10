@@ -1,0 +1,349 @@
+{
+  "runs": {
+    "model.core": {
+      "run_id": "run_20260910203220",
+      "verified_at": "2026-09-10T20:32:21.434Z",
+      "status": "VERIFIED",
+      "achieved_level": 3,
+      "required_level": 2,
+      "method": "acceptance_test",
+      "source_fingerprint": "89457e695cd02f2e",
+      "source_file_count": 50,
+      "evidence": [
+        {
+          "type": "command_execution",
+          "command": "node --test (5 files)",
+          "exit_code": 0,
+          "passed": true
+        },
+        {
+          "type": "acceptance_test",
+          "name": "suite",
+          "passed_count": 51,
+          "failed_count": 0,
+          "passed": true
+        }
+      ],
+      "summary": "51 test(s) passed, 0 failed"
+    },
+    "calc.move_budget": {
+      "run_id": "run_20260910203220",
+      "verified_at": "2026-09-10T20:32:21.473Z",
+      "status": "VERIFIED",
+      "achieved_level": 2,
+      "required_level": 2,
+      "method": "known_answer_test",
+      "source_fingerprint": "c82a3ab7a8ff10a1",
+      "source_file_count": 8,
+      "evidence": [
+        {
+          "type": "known_answer_test",
+          "name": "roadtrip.total",
+          "label": "Road trip total",
+          "expected": 2569.17,
+          "actual": 2569.17,
+          "passed": true
+        },
+        {
+          "type": "known_answer_test",
+          "name": "common.liquidity",
+          "label": "Common physical move",
+          "expected": 14019.17,
+          "actual": 14019.17,
+          "passed": true
+        },
+        {
+          "type": "known_answer_test",
+          "name": "sell.liquidity",
+          "label": "Base transition (sell branch)",
+          "expected": 19153.71,
+          "actual": 19153.71,
+          "passed": true
+        },
+        {
+          "type": "known_answer_test",
+          "name": "rent.liquidity",
+          "label": "Rent branch liquidity",
+          "expected": 31153.71,
+          "actual": 31153.71,
+          "passed": true
+        },
+        {
+          "type": "known_answer_test",
+          "name": "rent.reserve",
+          "label": "Landlord reserve stays reserve capital",
+          "expected": 12000,
+          "actual": 12000,
+          "passed": true
+        },
+        {
+          "type": "known_answer_test",
+          "name": "sell.net_cost",
+          "label": "Lane net cost, sell branch",
+          "expected": 14453.71,
+          "actual": 14453.71,
+          "passed": true
+        },
+        {
+          "type": "known_answer_test",
+          "name": "house.break_even_rent",
+          "label": "Break-even rent",
+          "expected": 3698.13,
+          "actual": 3698.13,
+          "passed": true
+        },
+        {
+          "type": "known_answer_test",
+          "name": "house.guardrail_rent",
+          "label": "Rent clearing the $350 guardrail",
+          "expected": 3249.41,
+          "actual": 3249.41,
+          "passed": true
+        }
+      ],
+      "summary": "8/8 locked figures reproduced"
+    },
+    "engine.timeline": {
+      "run_id": "run_20260910203220",
+      "verified_at": "2026-09-10T20:32:21.479Z",
+      "status": "VERIFIED",
+      "achieved_level": 2,
+      "required_level": 2,
+      "method": "acceptance_test",
+      "source_fingerprint": "55dd80a348607c66",
+      "source_file_count": 2,
+      "evidence": [
+        {
+          "type": "acceptance_test",
+          "name": "nov18_feb2.feasible",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        },
+        {
+          "type": "acceptance_test",
+          "name": "nov18_feb2.slack_days",
+          "expected": 28,
+          "actual": 28,
+          "passed": true
+        },
+        {
+          "type": "acceptance_test",
+          "name": "nov18_feb2.earliest_possible_report_date",
+          "expected": "2027-01-05",
+          "actual": "2027-01-05",
+          "passed": true
+        },
+        {
+          "type": "acceptance_test",
+          "name": "jan15_feb15.feasible",
+          "expected": false,
+          "actual": false,
+          "passed": true
+        },
+        {
+          "type": "acceptance_test",
+          "name": "jan15_feb15.shortfall_days",
+          "expected": 17,
+          "actual": 17,
+          "passed": true
+        },
+        {
+          "type": "acceptance_test",
+          "name": "no_report_date.feasible",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        },
+        {
+          "type": "acceptance_test",
+          "name": "no_report_date.total_days_from_trigger",
+          "expected": 48,
+          "actual": 48,
+          "passed": true
+        },
+        {
+          "type": "assertion",
+          "name": "no_unsafe_compression_remedy",
+          "expected": "remedies never shorten the dog road trip",
+          "actual": "explicitly refuses longer driving days",
+          "passed": true
+        }
+      ],
+      "summary": "3 scenario(s) checked"
+    },
+    "model.canonical_state": {
+      "run_id": "run_20260910203220",
+      "verified_at": "2026-09-10T20:32:21.483Z",
+      "status": "VERIFIED",
+      "achieved_level": 2,
+      "required_level": 2,
+      "method": "schema_validation",
+      "source_fingerprint": "3aee258c2f409bb9",
+      "source_file_count": 4,
+      "evidence": [
+        {
+          "type": "schema_validation",
+          "name": "canonical_rules",
+          "expected": 0,
+          "actual": 0,
+          "passed": true
+        },
+        {
+          "type": "assertion",
+          "name": "contested_records_are_not_commitment_safe",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        }
+      ],
+      "summary": "50 records, 0 violations"
+    },
+    "cli.commands": {
+      "run_id": "run_20260910203220",
+      "verified_at": "2026-09-10T20:32:22.099Z",
+      "status": "VERIFIED",
+      "achieved_level": 3,
+      "required_level": 3,
+      "method": "real_command_execution",
+      "source_fingerprint": "2c1aa7e7ba9fb00f",
+      "source_file_count": 11,
+      "evidence": [
+        {
+          "type": "command_execution",
+          "command": "cc readiness",
+          "exit_code": 0,
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "readiness: \"Relocation readiness\"",
+          "expected": "Relocation readiness",
+          "actual": "Relocation readiness",
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "readiness: \"Liquidity required\"",
+          "expected": "Liquidity required",
+          "actual": "Liquidity required",
+          "passed": true
+        },
+        {
+          "type": "command_execution",
+          "command": "cc attention",
+          "exit_code": 0,
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "attention: \"deserve attention\"",
+          "expected": "deserve attention",
+          "actual": "deserve attention",
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "attention: \"Intentionally deferred\"",
+          "expected": "Intentionally deferred",
+          "actual": "Intentionally deferred",
+          "passed": true
+        },
+        {
+          "type": "command_execution",
+          "command": "cc rules",
+          "exit_code": 0,
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "rules: \"Authority hierarchy\"",
+          "expected": "Authority hierarchy",
+          "actual": "Authority hierarchy",
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "rules: \"would retire\"",
+          "expected": "would retire",
+          "actual": "would retire",
+          "passed": true
+        },
+        {
+          "type": "command_execution",
+          "command": "cc budget --support movers_hotels_reimbursed",
+          "exit_code": 0,
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "budget: \"front the cash\"",
+          "expected": "front the cash",
+          "actual": "front the cash",
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "budget: \"Liquidity required\"",
+          "expected": "Liquidity required",
+          "actual": "Liquidity required",
+          "passed": true
+        },
+        {
+          "type": "command_execution",
+          "command": "cc timeline --offer 2026-11-18 --report 2027-02-02",
+          "exit_code": 0,
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "timeline: \"Earliest possible first office day\"",
+          "expected": "Earliest possible first office day",
+          "actual": "Earliest possible first office day",
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "timeline: \"Critical path\"",
+          "expected": "Critical path",
+          "actual": "Critical path",
+          "passed": true
+        },
+        {
+          "type": "command_execution",
+          "command": "cc why career.cherie_role.title",
+          "exit_code": 0,
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "why: \"deliberately believes nothing\"",
+          "expected": "deliberately believes nothing",
+          "actual": "deliberately believes nothing",
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "why: \"Safe to act on irreversibly: NO\"",
+          "expected": "Safe to act on irreversibly: NO",
+          "actual": "Safe to act on irreversibly: NO",
+          "passed": true
+        },
+        {
+          "type": "command_execution",
+          "command": "cc validate",
+          "exit_code": 0,
+          "passed": true
+        },
+        {
+          "type": "output_assertion",
+          "name": "validate: \"No violations\"",
+          "expected": "No violations",
+          "actual": "No violations",
+          "passed": true
+        }
+      ],
+      "summary": "7 command(s) executed for real"
+    }
+  }
+}

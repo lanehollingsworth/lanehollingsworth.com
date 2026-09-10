@@ -1,0 +1,68 @@
+{
+  "principle": "Proof over confidence. A task is not complete because an agent says it worked. It is complete only when the system holds evidence, from the same execution cycle, that demonstrates the expected behavior.",
+  "shorthand": "\"Should work\" is not \"works.\"",
+  "work_item_lifecycle": {
+    "states": ["planned", "in_progress", "implemented", "verification_required", "verified", "verification_failed", "verification_stale", "complete"],
+    "transitions": {
+      "planned": ["in_progress"],
+      "in_progress": ["implemented"],
+      "implemented": ["verification_required"],
+      "verification_required": ["verified", "verification_failed"],
+      "verified": ["complete", "verification_stale"],
+      "verification_failed": ["in_progress"],
+      "verification_stale": ["verification_required"],
+      "complete": ["verification_stale"]
+    },
+    "rules": [
+      "implemented is not complete. There is no transition from in_progress or implemented directly to complete.",
+      "complete is reachable only from verified.",
+      "A material change to a verified capability's sources returns it to verification_stale, whatever it was before - including complete.",
+      "verification_failed returns to in_progress. It is never re-labelled as verified without a new passing run."
+    ]
+  },
+  "levels": [
+    { "level": 0, "id": "unverified", "label": "Unverified", "means": "Agent inference or an implementation claim only. No evidence." },
+    { "level": 1, "id": "static", "label": "Static", "means": "Code review, schema validation, compilation. Proves it parses, not that it works." },
+    { "level": 2, "id": "deterministic", "label": "Deterministic", "means": "Unit, acceptance, known-answer or regression test passed." },
+    { "level": 3, "id": "integrated", "label": "Integrated", "means": "A real command ran against the real local system and succeeded." },
+    { "level": 4, "id": "end_to_end", "label": "End to end", "means": "A real external system was reached and the outcome was re-read or observed." },
+    { "level": 5, "id": "operational", "label": "Operational", "means": "The behavior has succeeded under actual scheduled or production use." }
+  ],
+  "level_note": "Not everything needs level 5. A fuel calculator is entirely trustworthy at level 2. A Sheets write needs level 4 before anyone may call it working. A morning briefing needs an observed scheduled run before level 5.",
+  "claim_to_minimum_proof": [
+    { "claim": "code_compiles", "minimum_level": 1, "proof": "Successful build." },
+    { "claim": "calculation_works", "minimum_level": 2, "proof": "Deterministic or known-answer test." },
+    { "claim": "cli_works", "minimum_level": 3, "proof": "Actual CLI execution with exit code and captured output." },
+    { "claim": "integration_works", "minimum_level": 4, "proof": "Real external request and validated response." },
+    { "claim": "read_sync_works", "minimum_level": 4, "proof": "Live read plus expected-data assertion." },
+    { "claim": "write_sync_works", "minimum_level": 4, "proof": "Live write plus re-read verification." },
+    { "claim": "scheduled_action_works", "minimum_level": 5, "proof": "An observed scheduled run." },
+    { "claim": "ui_flow_works", "minimum_level": 4, "proof": "Browser interaction with a DOM assertion." },
+    { "claim": "data_changed_correctly", "minimum_level": 4, "proof": "Pre-state capture, mutation, post-state re-read, before/after comparison." }
+  ],
+  "evidence_types": {
+    "unit_test": 2, "acceptance_test": 2, "known_answer_test": 2, "regression_test": 2,
+    "schema_validation": 1, "build": 1,
+    "command_execution": 3, "exit_code": 3, "captured_stdout": 3, "captured_stderr": 3, "output_assertion": 3,
+    "real_request": 4, "real_response": 4, "real_sheet_read": 4, "known_cell_comparison": 4, "generated_diff": 4,
+    "zero_write_assertion": 4, "post_write_reread": 4, "pre_state_capture": 4, "post_state_reread": 4, "before_after_comparison": 4,
+    "browser_execution": 4, "screenshot": 4, "dom_assertion": 4,
+    "scheduled_run_record": 5, "delivery_confirmation": 5,
+    "assertion": 2
+  },
+  "proof_matching_rules": [
+    "A passing unit test proves the function behaves correctly for the inputs tested. It does not prove an integration works.",
+    "A mocked response proves the parser handles a fixture. It does not prove the live provider is reachable with our credentials.",
+    "A successful site build proves the site compiles. It does not prove the Command Center's acceptance behavior - which is why cc:test runs in CI.",
+    "Evidence below a capability's required level leaves it NOT VERIFIED, however much of that evidence exists."
+  ],
+  "invalidation_rule": "Verification records a fingerprint of the sources it covered. When those sources change, the verification goes stale and must be re-run. Proof from last Tuesday says nothing about code changed today.",
+  "reporting_rule": "Report proof, not adjectives. Never 'sync is working' - always the claim, the level, the evidence and the timestamp. 'I believe X but cannot prove X from a sufficiently fresh source' is a valid and useful answer.",
+  "recommendation_support_rule": "A recommendation's confidence derives from the evidence state of its material inputs, never from the model's own certainty. Report coverage as verified inputs over material inputs, and always name what is unresolved.",
+  "input_evidence_classes": {
+    "verified": "Externally verified fact or a passing verification.",
+    "modeled": "A computed result whose calculator is verified.",
+    "planning_assumption": "A placeholder the model plans on.",
+    "unresolved": "No canonical value: missing evidence or conflicting sources."
+  }
+}

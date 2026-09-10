@@ -15,6 +15,7 @@ import { saveSnapshot, diffSnapshot } from './reports/snapshot.js';
 import { validateCanonical, pendingResolution, supersededHistory, explain, stateNodes } from './lib/canonical.js';
 import { activeRules, retiredRules, simulateProgramCompletion, ruleStatus } from './lib/rules.js';
 import { attentionReport } from './lib/attention.js';
+import { runVerification, verificationStatus, evidenceCoverage } from './lib/verification.js';
 
 function parseArgs(argv) {
   const args = { _: [], set: [] };
@@ -600,6 +601,75 @@ function renderProgram(project) {
   for (const gap of project.programs.not_built_yet) out(`  - ${gap}`);
 }
 
+function renderVerify(project, args) {
+  const only = args.only ? args.only.split(',') : null;
+
+  if (args.status) {
+    const rows = verificationStatus(project);
+    out(heading('LANE COMMAND CENTER - VERIFICATION STATUS (from the log, nothing re-run)'));
+    out(table(rows, [
+      { header: 'Capability', value: (r) => r.label },
+      { header: 'Status', value: (r) => r.status },
+      { header: 'Verified at', value: (r) => r.verified_at ?? '-' },
+      { header: 'Detail', value: (r) => r.detail },
+    ]));
+    const stale = rows.filter((r) => r.status === 'VERIFICATION_STALE');
+    if (stale.length) process.exitCode = 1;
+    return;
+  }
+
+  const report = runVerification(project, { only, persist: !args['no-persist'] });
+  out(heading(`LANE COMMAND CENTER - VERIFICATION REPORT (${report.run_id})`));
+  out(`  ${project.verification.principle}`);
+  out(`  ${project.verification.shorthand}`);
+
+  for (const row of report.results) {
+    const level = row.achieved_level ? `level ${row.achieved_level}/${row.required_level}` : `needs level ${row.required_level}`;
+    out(subheading(`${row.label} - ${row.status}`));
+    out(`  claim: ${row.claim}   ${level}   ${row.required ? 'required' : 'not required yet'}`);
+    out(`  ${row.summary}`);
+    for (const item of row.evidence.slice(0, 12)) {
+      const mark = item.passed === false ? 'FAIL' : 'ok  ';
+      const detail = item.expected !== undefined
+        ? `expected ${JSON.stringify(item.expected)}, got ${JSON.stringify(item.actual)}`
+        : item.command
+          ? `${item.command} -> exit ${item.exit_code}`
+          : '';
+      out(`    [${mark}] ${item.type}  ${item.name ?? ''}  ${detail}`);
+    }
+    if (row.evidence.length > 12) out(`    ... ${row.evidence.length - 12} more evidence item(s) recorded in outputs/verification-log.json`);
+    if (row.blocked_on?.length) out(`  blocked on: ${row.blocked_on.join('; ')}`);
+  }
+
+  if (project.recommendations) {
+    out(subheading('Recommendation support - coverage, not confidence'));
+    for (const recommendation of project.recommendations.recommendations) {
+      const support = evidenceCoverage(project, recommendation);
+      out(`  ${support.statement}`);
+      for (const input of support.inputs) {
+        const mark = ['verified', 'modeled'].includes(input.evidence_class) ? 'x' : ' ';
+        out(`    [${mark}] ${input.id} - ${input.evidence_class} (${input.detail})`);
+      }
+      out(`    Evidence coverage: ${support.coverage} material inputs (${support.assumption_backed.length} resting on a planning assumption).`);
+      out(`    Conclusion: ${support.supported ? 'supported' : 'NOT supported'} - ${support.basis}`);
+      if (support.unresolved.length) {
+        out(`    Unresolved: ${support.unresolved.map((input) => input.id).join(', ')}`);
+      }
+      out(`    ${support.note}`);
+    }
+  }
+
+  out(subheading('Result'));
+  const counts = report.results.reduce((acc, row) => ({ ...acc, [row.status]: (acc[row.status] ?? 0) + 1 }), {});
+  out(`  ${Object.entries(counts).map(([status, count]) => `${count} ${status}`).join(', ')}`);
+  if (!report.ok) {
+    process.exitCode = 1;
+    out(`  Required capabilities not verified: ${report.failing.map((row) => row.id).join(', ')}`);
+  } else {
+    out('  Every required capability is verified by evidence from this run.');
+  }
+}
+
 const COMMANDS = {
   budget: renderBudget,
   roadtrip: renderRoadTrip,
@@ -614,6 +684,7 @@ const COMMANDS = {
   contradictions: renderContradictions,
   canonical: renderCanonical,
   attention: renderAttention,
+  verify: renderVerify,
   rules: renderRules,
   program: renderProgram,
   why: renderWhy,

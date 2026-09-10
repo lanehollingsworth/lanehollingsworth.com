@@ -1,0 +1,18 @@
+{
+  "note": "Recommendations carry evidence coverage, never a fabricated confidence percentage. Every material input is named, and what is unresolved is named too.",
+  "recommendations": [
+    {
+      "id": "rec.delay_ca_lease",
+      "statement": "Do not sign a California lease yet.",
+      "supports": "defer.sign_a_california_lease",
+      "material_inputs": [
+        { "id": "career.cherie_role.title", "kind": "canonical_record", "why": "Work location and level follow from the role, and the role is not settled." },
+        { "id": "sell.liquidity", "kind": "computed", "capability": "calc.move_budget", "why": "Move-in cash must be sized before committing to a lease." },
+        { "id": "ca_housing.monthly_rent", "kind": "assumption", "why": "The $3,200 target is a planning placeholder, not live inventory." },
+        { "id": "q.relocation_support", "kind": "question", "why": "Employer support changes what Lane must front at signing." }
+      ],
+      "support_when": "any_input_unresolved",
+      "conclusion_rule": "Supported while any material input is unresolved or the authorization gate is unmet. A deferral is strengthened by missing evidence; an action would be weakened by it."
+    }
+  ]
+}

@@ -87,6 +87,8 @@ export function loadProject({ overrides = {}, programId = null } = {}) {
     rules: core.rules,
     actionStates: core['action-states'],
     canonicalState: core['canonical-state'],
+    verification: core.verification,
+    capabilities: core.capabilities,
     canonical: core['canonical-records'],
     decisions: core.decisions,
     // Life domains that outlive any one program
@@ -109,6 +111,7 @@ export function loadProject({ overrides = {}, programId = null } = {}) {
     readiness: program.readiness,
     moveSequence: program['move-sequence'],
     roadtrip: program.roadtrip,
+    recommendations: program.recommendations,
   };
 }
 

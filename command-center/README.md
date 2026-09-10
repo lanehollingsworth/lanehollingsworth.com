@@ -104,6 +104,46 @@ These are enforced in code and data, not in good intentions:
   earlier than the sequence allows, the timeline says "short by N days" and lists
   remedies — none of which is "drive longer days with the dogs."
 
+## Proof over confidence
+
+`npm run cc -- verify` proves the machinery works and **exits non-zero when a
+required capability is not verified**. CI runs it after `cc:test`.
+
+```
+Move budget, road trip and house economics - VERIFIED
+  claim: calculation_works   level 2/2   required
+  8/8 locked figures reproduced
+    [ok  ] known_answer_test  roadtrip.total  expected 2569.17, got 2569.17
+    [ok  ] known_answer_test  sell.liquidity  expected 19153.71, got 19153.71
+
+Google Sheets read-only sync and diff - NOT_IMPLEMENTED
+  claim: read_sync_works   needs level 4   not required yet
+  Not built. No evidence, and none borrowed.
+  blocked on: Sheet ID; OAuth client credentials (never committed)
+```
+
+Three rules, detailed in [ADR-002](docs/ADR-002-verification-contract.md):
+
+- **Implemented is not complete.** Work items run planned → in_progress →
+  implemented → verification_required → verified → complete. There is no
+  transition from implemented straight to complete; `advanceWorkItem()` throws.
+- **Evidence must match the claim.** A CLI claim needs a real CLI execution
+  (level 3), an integration claim needs a real external request (level 4).
+  Evidence below the required level reports INSUFFICIENT_PROOF no matter how
+  much of it exists — a passing fixture test never verifies a live provider.
+- **Proof goes stale.** Each verification fingerprints the sources it covered.
+  Change them and the pass becomes VERIFICATION_STALE. Last Tuesday's green run
+  says nothing about today's code.
+
+Recommendations carry evidence coverage rather than a confidence percentage,
+and always name what is unresolved:
+
+```
+Do not sign a California lease yet.
+  Evidence coverage: 2/4 material inputs (1 resting on a planning assumption).
+  Unresolved: career.cherie_role.title, q.relocation_support
+```
+
 ## Platform and program
 
 ```
@@ -113,6 +153,8 @@ data/
     action-states.json      what kind of attention a thing deserves, including none
     programs.json           the program registry and the life domains
     canonical-state.json    evidence / canonical / verification vocabularies
+    verification.json       proof levels, claim-to-proof table, work-item lifecycle
+    capabilities.json       every capability and the contract that would prove it
     canonical-records.json  contested or decision-bearing state
     decisions.json          decision memory
     career, finance, house, assets, benefits, community, neighborhoods
@@ -127,6 +169,8 @@ Rule — and carry `program` and `domain` tags. Nothing is named `MoveTask`. The
 `road-trip.js` and `house-rent-vs-sell.js` are relocation logic, not platform.
 
 ```bash
+npm run cc -- verify       # run the checks, record the evidence, report the levels
+npm run cc -- verify --status   # what the log claims, and what has gone stale
 npm run cc -- program      # the active program, its completion criteria, platform context
 npm run cc -- rules        # rules, lifecycles, authority, and what a completion would retire
 npm run cc -- attention    # what deserves attention today - and what deliberately does not
@@ -257,7 +301,8 @@ too old to act on rather than treating all inputs as equally durable.
 ## Tests
 
 ```bash
-npm run cc:test
+npm run cc:test     # 51 tests
+npm run cc:verify   # real execution, recorded evidence, non-zero on failure
 ```
 
 `tests/acceptance.test.js` is the Phase 1 acceptance list from the handoff,
@@ -274,8 +319,14 @@ do not become open decisions, conflicting sources stay unresolved, the evidence
 vocabulary still drives freshness, overrides keep prior provenance, and the
 validator actually bites.
 
-CI runs `npm run cc:test` before `npm run build`, so the planning semantics are
-enforced on every PR rather than when someone remembers.
+`tests/verification.test.js` checks the checker: that implemented cannot reach
+complete, that fixture-level evidence cannot satisfy an integration claim, that
+a changed fingerprint makes a pass stale, and that unbuilt capabilities borrow
+nobody else's proof.
+
+CI runs `npm run cc:test` and `npm run cc:verify` before `npm run build`, so
+the planning semantics and the evidence contract are both enforced on every PR
+rather than when someone remembers.
 
 ## Deliberately not built yet
 
