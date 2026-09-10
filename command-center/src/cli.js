@@ -12,6 +12,7 @@ import { rankQuestions } from './research/questions.js';
 import { buildReadiness } from './reports/readiness.js';
 import { buildPulse } from './reports/weekly-pulse.js';
 import { saveSnapshot, diffSnapshot } from './reports/snapshot.js';
+import { validateCanonical, pendingResolution, supersededHistory, explain, stateNodes } from './lib/canonical.js';
 
 function parseArgs(argv) {
   const args = { _: [], set: [] };
@@ -31,6 +32,11 @@ function parseArgs(argv) {
   }
   return args;
 }
+
+process.stdout.on('error', (error) => {
+  if (error.code === 'EPIPE') process.exit(0);
+  throw error;
+});
 
 const out = (text) => process.stdout.write(`${text}\n`);
 
@@ -247,9 +253,13 @@ function renderReadiness(project, args) {
   for (const q of readiness.top_questions) out(`  ${q.priority}  ${q.id} - ${q.question}`);
   out(subheading('Intentionally blocked until a trigger exists'));
   for (const action of readiness.blocked_actions) out(`  - ${action.action} (unblocked by ${action.unblocked_by}): ${action.reason}`);
-  if (readiness.open_contradictions.length) {
-    out(subheading('Records that conflict and need Lane\'s decision'));
-    for (const c of readiness.open_contradictions) out(`  - [${c.id}] ${c.topic}: ${c.proposed_resolution}`);
+  if (readiness.pending_resolution.length) {
+    out(subheading('Unsettled state - what each one needs'));
+    for (const item of readiness.pending_resolution) {
+      out(`  - [${item.id}] ${item.label}`);
+      out(`      state: ${item.canonical_state}, needs: ${item.resolution_required}`);
+      if (item.resolution_rule) out(`      ${item.resolution_rule}`);
+    }
   }
 }
 
@@ -297,21 +307,141 @@ function renderPulse(project, args) {
 
   out(subheading('10. Decisions needed from Lane'));
   if (pulse.decision_needed.length === 0) out('  None.');
-  else for (const decision of pulse.decision_needed) out(`  - ${decision.topic}: ${decision.proposal}`);
+  else for (const decision of pulse.decision_needed) out(`  - ${decision.topic} (${decision.state}, needs ${decision.needs}): ${decision.proposal ?? ''}`);
+  out(`  ${pulse.settled_this_phase} record(s) are settled history and are intentionally not listed here.`);
 
   if (pulse.honesty_note) out(`\n  ${pulse.honesty_note}`);
 }
 
 function renderContradictions(project) {
-  out(heading('Contradictions and data-cleanup queue'));
+  const violations = validateCanonical(project);
+  const pending = pendingResolution(project);
+  const settled = supersededHistory(project).filter((row) => row.kind === 'contradiction' || row.kind === 'conflict_entry');
+
+  out(heading('Canonical state and source conflicts'));
   out(`  ${project.contradictions.rule}`);
-  out('');
-  for (const item of project.contradictions.items) {
-    out(`  [${item.id}] ${item.topic} (${item.severity}, ${item.status})`);
-    out(`     sheet says:  ${item.sheet_says}`);
-    out(`     latest:      ${item.latest_decision}`);
-    out(`     proposal:    ${item.proposed_resolution}\n`);
+
+  out(subheading(`Unsettled - needs someone (${pending.length})`));
+  if (pending.length === 0) out('  none');
+  for (const item of pending) {
+    out(`  [${item.id}] ${item.label}`);
+    out(`     state:  ${item.canonical_state}`);
+    out(`     needs:  ${item.resolution_required}`);
+    if (item.resolution_rule) out(`     rule:   ${item.resolution_rule}`);
+    if (item.sources.length) {
+      for (const source of item.sources) {
+        out(`     source: "${source.value}" - ${source.source} (${source.evidence_type}, ${source.verification_state})`);
+      }
+    }
+    out('');
   }
+
+  out(subheading(`Settled history - superseded, not open (${settled.length})`));
+  for (const row of settled) {
+    out(`  [${row.id}] ${row.label}`);
+    out(`     retired value: ${row.value ?? 'n/a'}`);
+    out(`     superseded by: ${row.superseded_by}`);
+    out(`     because:       ${row.reason}`);
+  }
+
+  const sheetActions = project.contradictions.items.filter((item) => item.sheet_action);
+  out(subheading('Sheet actions still worth taking'));
+  for (const item of sheetActions) out(`  - [${item.id}] ${item.sheet_action}`);
+
+  if (violations.length) {
+    out(subheading(`Rule violations (${violations.length})`));
+    for (const violation of violations) out(`  ! ${violation.id}: ${violation.rule} - ${violation.detail}`);
+  }
+}
+
+function renderCanonical(project) {
+  out(heading('Canonical records - what the model currently believes'));
+  out(table(project.canonical.records, [
+    { header: 'Id', value: (r) => r.id },
+    { header: 'Believes', value: (r) => (r.canonical_value === null ? '(nothing - deliberately)' : r.canonical_value) },
+    { header: 'State', value: (r) => r.canonical_state },
+    { header: 'Evidence', value: (r) => r.evidence_type ?? '-' },
+    { header: 'Verified', value: (r) => r.verification_state ?? '-' },
+    { header: 'Needs', value: (r) => r.resolution_required ?? '' },
+  ]));
+  out(subheading('Why three fields and not one enum'));
+  for (const line of project.canonicalState.why_three_dimensions) out(`  - ${line}`);
+  out(`\n  Commitment-safe states: ${project.canonicalState.commitment_safe_states.join(', ')}`);
+  out(`  ${project.canonicalState.planning_note}`);
+}
+
+function renderWhy(project, args) {
+  const id = args._[1] ?? args.id;
+  if (!id) throw new Error('why needs a record id, e.g. `why vehicle.tundra.disposition`.');
+  const explanation = explain(project, id);
+
+  out(heading(`Why the model believes this - ${explanation.id}`));
+  out(`  ${explanation.label}`);
+  out(subheading('Current belief'));
+  out(`  ${explanation.belief}`);
+  out(`  canonical_state: ${explanation.canonical_state}   evidence_type: ${explanation.evidence_type ?? '-'}   verification: ${explanation.verification_state ?? '-'}`);
+  out(`  Safe to act on irreversibly: ${explanation.commitment_safe ? 'yes' : 'NO'}`);
+  if (explanation.detail) { out(subheading('Detail')); for (const line of explanation.detail) out(`  - ${line}`); }
+  if (explanation.sources.length) {
+    out(subheading('Sources that disagree'));
+    for (const source of explanation.sources) {
+      out(`  - "${source.value}"`);
+      out(`      from ${source.source} (${source.evidence_type}, ${source.verification_state})`);
+      if (source.note) out(`      ${source.note}`);
+    }
+  }
+  if (explanation.conflicts.length) {
+    out(subheading('Superseded values retained as evidence'));
+    for (const conflict of explanation.conflicts) {
+      out(`  - "${conflict.value}" from ${conflict.source} (${conflict.canonical_state})`);
+      out(`      ${conflict.resolution_reason}`);
+    }
+  }
+  if (explanation.decisions.length) {
+    out(subheading('Decision history'));
+    for (const decision of explanation.decisions) {
+      out(`  ${decision.effective_date}  ${decision.previous_value ?? '(none)'} -> ${decision.new_value ?? '(none)'}`);
+      out(`      ${decision.reason}`);
+      out(`      source: ${decision.source}   reversible: ${decision.reversible}${decision.review_after ? `   review: ${decision.review_after}` : ''}`);
+    }
+  }
+  if (explanation.resolution_required) {
+    out(subheading('What would settle it'));
+    out(`  needs: ${explanation.resolution_required}`);
+    if (explanation.resolution_rule) out(`  rule:  ${explanation.resolution_rule}`);
+  }
+  if (explanation.blocks_gates.length) out(`\n  Blocks: ${explanation.blocks_gates.join(', ')}`);
+  if (explanation.refresh_rule) out(`  Refresh rule: ${explanation.refresh_rule}`);
+  if (explanation.last_verified) out(`  Last verified: ${explanation.last_verified}`);
+  if (explanation.review_after) out(`  Review after: ${explanation.review_after}`);
+  if (explanation.sheet_action) out(`  Sheet action: ${explanation.sheet_action}`);
+  for (const note of explanation.notes) out(`\n  Note: ${note}`);
+}
+
+function renderDecisions(project) {
+  out(heading('Decision log'));
+  out(`  ${project.decisions.note}`);
+  out('');
+  for (const decision of project.decisions.decisions) {
+    out(`  ${decision.effective_date}  [${decision.decision_id}]`);
+    out(`     subject:  ${decision.subject}`);
+    out(`     change:   ${decision.previous_value ?? '(none)'} -> ${decision.new_value ?? '(none)'}`);
+    out(`     reason:   ${decision.reason}`);
+    out(`     source:   ${decision.source}   reversible: ${decision.reversible}${decision.review_after ? `   review after: ${decision.review_after}` : ''}`);
+    out('');
+  }
+}
+
+function renderValidate(project) {
+  const violations = validateCanonical(project);
+  out(heading('Canonical-state validation'));
+  if (violations.length === 0) {
+    const nodes = stateNodes(project);
+    out(`  ${nodes.length} state-bearing records checked against ${project.canonicalState.validation_rules.length} rules. No violations.`);
+    return;
+  }
+  process.exitCode = 1;
+  for (const violation of violations) out(`  ! [${violation.kind}] ${violation.id}: ${violation.rule} - ${violation.detail}`);
 }
 
 function renderBlocked(project) {
@@ -391,6 +521,10 @@ const COMMANDS = {
   readiness: renderReadiness,
   pulse: renderPulse,
   contradictions: renderContradictions,
+  canonical: renderCanonical,
+  why: renderWhy,
+  decisions: renderDecisions,
+  validate: renderValidate,
   blocked: renderBlocked,
   'offer-day': renderOfferDay,
   snapshot: (project) => {

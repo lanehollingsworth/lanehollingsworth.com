@@ -1,6 +1,6 @@
 import { daysBetween } from '../lib/format.js';
 
-const STALE_BY_STATUS = { verified: 90, sheet_value: 45, lane_confirmed: 60, planning_assumption: 30, historical_observation: 120, research_lead: 30, session_override: 1 };
+const STALE_BY_EVIDENCE = { verified: 90, sheet_value: 45, lane_confirmed: 60, planning_assumption: 30, historical_observation: 120, research_lead: 30, session_override: 1 };
 
 /**
  * Which inputs are old enough that acting on them is a risk?
@@ -14,13 +14,14 @@ export function checkFreshness(project, { asOf, maxAgeDays = null } = {}) {
 
   const rows = [...project.assumptions.values()].map((assumption) => {
     const age = assumption.last_verified ? daysBetween(assumption.last_verified, today) : null;
-    const threshold = maxAgeDays ?? STALE_BY_STATUS[assumption.status] ?? 30;
+    const threshold = maxAgeDays ?? STALE_BY_EVIDENCE[assumption.evidence_type] ?? 30;
     return {
       id: assumption.id,
       label: assumption.label,
       value: assumption.value,
       unit: assumption.unit,
-      status: assumption.status,
+      evidence_type: assumption.evidence_type,
+      canonical_state: assumption.canonical_state,
       confidence: assumption.confidence,
       last_verified: assumption.last_verified ?? null,
       age_days: age,
@@ -34,7 +35,7 @@ export function checkFreshness(project, { asOf, maxAgeDays = null } = {}) {
     as_of: today,
     threshold_note: maxAgeDays
       ? `Uniform ${maxAgeDays}-day threshold requested.`
-      : 'Per-status thresholds: verified 90d, sheet value 45d, Lane-confirmed 60d, planning assumption 30d, historical observation 120d.',
+      : 'Per-evidence-type thresholds: verified 90d, sheet value 45d, Lane-confirmed 60d, planning assumption 30d, historical observation 120d.',
     stale: rows.filter((row) => row.stale),
     fresh: rows.filter((row) => !row.stale),
     low_confidence_in_use: rows.filter((row) => row.confidence === 'low'),

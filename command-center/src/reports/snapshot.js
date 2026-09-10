@@ -5,6 +5,7 @@ import { round2 } from '../lib/format.js';
 import { computeBudget } from '../calculators/move-budget.js';
 import { computeHouse } from '../calculators/house-rent-vs-sell.js';
 import { rankQuestions } from '../research/questions.js';
+import { stateNodes, pendingResolution } from '../lib/canonical.js';
 
 const SNAPSHOT_PATH = join(OUTPUT_DIR, 'snapshot.json');
 
@@ -27,7 +28,12 @@ export function buildSnapshot(project) {
     house: { break_even_rent: house.break_even_rent, guardrail_rent: house.guardrail_rent, modeled_subsidy: house.modeled_subsidy },
     assumptions: Object.fromEntries([...project.assumptions.values()].map((a) => [a.id, a.value])),
     open_questions: openQuestions,
-    open_contradictions: project.contradictions.items.filter((c) => c.status !== 'resolved_in_model').map((c) => c.id),
+    canonical_states: Object.fromEntries(
+      stateNodes(project)
+        .filter((node) => node.kind !== 'assumption')
+        .map((node) => [node.id, node.canonical_state]),
+    ),
+    pending_resolution: pendingResolution(project).map((item) => item.id),
   };
 }
 
@@ -70,6 +76,16 @@ export function diffSnapshot(project, previous = loadSnapshot()) {
       changes.push({ kind: 'house_changed', id: key, from: before, to: value, delta: round2(value - before) });
     }
   }
+  for (const [id, state] of Object.entries(current.canonical_states)) {
+    const before = previous.canonical_states?.[id];
+    if (before === undefined) changes.push({ kind: 'record_added', id, to: state });
+    else if (before !== state) changes.push({ kind: 'canonical_state_changed', id, from: before, to: state });
+  }
+  const settled = (previous.pending_resolution ?? []).filter((id) => !current.pending_resolution.includes(id));
+  const raised = current.pending_resolution.filter((id) => !(previous.pending_resolution ?? []).includes(id));
+  for (const id of settled) changes.push({ kind: 'resolution_settled', id });
+  for (const id of raised) changes.push({ kind: 'resolution_needed', id });
+
   const resolved = (previous.open_questions ?? []).filter((id) => !current.open_questions.includes(id));
   const added = current.open_questions.filter((id) => !(previous.open_questions ?? []).includes(id));
   for (const id of resolved) changes.push({ kind: 'question_resolved', id });

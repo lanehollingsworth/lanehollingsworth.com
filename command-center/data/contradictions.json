@@ -1,29 +1,77 @@
 {
   "rule": "Reconcile explicitly. Never silently overwrite a human-facing record; surface the conflict, propose the correction, and wait for Lane to approve it.",
+  "state_note": "Each entry carries a canonical_state from canonical-state.json. A `superseded` entry is settled history and does not appear in the pending-resolution queue; `unresolved` and `conflicting_sources` entries do.",
   "items": [
-    { "id": "c.truck_disposition", "topic": "Truck disposition", "severity": "medium",
+    {
+      "id": "c.truck_disposition",
+      "topic": "Truck disposition",
+      "severity": "medium",
+      "canonical_record": "vehicle.tundra.disposition",
+      "canonical_state": "superseded",
+      "superseded_by": "decision.tundra.drive_to_ca",
+      "resolution_reason": "The later decision is to drive the Tundra to California with the dogs and reassess ownership after 3-6 months. The spreadsheet row is stale evidence, not an open question.",
       "sheet_says": "Move/Sell/Store/Donate tab: 'Truck - Evaluate sale'",
-      "latest_decision": "Drive the Toyota Tundra to California with the dogs; re-evaluate ownership after 3-6 months in California.",
-      "proposed_resolution": "Update the sheet row to 'Truck - Drive to CA; re-evaluate ownership at 3-6 months'.", "status": "awaiting_lane_approval" },
-    { "id": "c.cherie_title", "topic": "Cherie role title", "severity": "high",
-      "sheet_says": "Senior Product Manager II, Content & Media Platform, with an interview itinerary reportedly using 'Sr Principal' wording.",
-      "latest_decision": "Unresolved - do not guess.",
-      "proposed_resolution": "Ask the recruiter to confirm the exact posted title, level and requisition ID, then correct one record.", "status": "open", "question_id": "q.cherie_role_title" },
-    { "id": "c.cherie_duplicate", "topic": "Second Cherie thread", "severity": "medium",
+      "latest_decision": "Drive the Toyota Tundra to California; re-evaluate ownership after 3-6 months in California.",
+      "sheet_action": "Update the row to 'Truck - Drive to CA; re-evaluate ownership at 3-6 months'."
+    },
+    {
+      "id": "c.cherie_title",
+      "topic": "Cherie role title",
+      "severity": "high",
+      "canonical_record": "career.cherie_role.title",
+      "canonical_state": "conflicting_sources",
+      "resolution_required": "external_confirmation",
+      "question_id": "q.cherie_role_title",
+      "sheet_says": "Senior Product Manager II, Content & Media Platform, with an interview itinerary using 'Sr Principal Product Manager' wording.",
+      "latest_decision": "No canonical title. Both sources are preserved with their provenance.",
+      "sheet_action": "Leave both records in place. Ask the recruiter or interview team to confirm the posted title, level and requisition ID, then record it as a verified fact."
+    },
+    {
+      "id": "c.cherie_duplicate",
+      "topic": "Second Cherie thread",
+      "severity": "medium",
+      "canonical_record": null,
+      "canonical_state": "unresolved",
+      "resolution_required": "external_confirmation",
       "sheet_says": "A separate 'Principal role - Cherie team' record exists.",
       "latest_decision": "May be a duplicate or title confusion. Held separately on purpose.",
-      "proposed_resolution": "Keep opp.cherie_principal_thread on hold until the requisition is confirmed. Do not merge recruiting threads.", "status": "on_hold" },
-    { "id": "c.path_vs_branch", "topic": "Career path vs house branch", "severity": "medium",
+      "sheet_action": "Keep opp.cherie_principal_thread on hold until the requisition is confirmed. Do not merge recruiting threads."
+    },
+    {
+      "id": "c.path_vs_branch",
+      "topic": "Career path vs house branch",
+      "severity": "medium",
+      "canonical_record": null,
+      "canonical_state": "superseded",
+      "superseded_by": "decision.path_branch_orthogonal",
+      "resolution_reason": "The model treats career path, house branch and employer support as independent dimensions, which is what the sheet layout implied otherwise.",
       "sheet_says": "The granular move table shows the landlord-reserve line alongside the Path A/B/C columns, implying a path selects a house branch.",
       "latest_decision": "House disposition is orthogonal to career path.",
-      "proposed_resolution": "Model them as two independent dimensions (this repo does) and re-lay the sheet so the reserve sits under the house branch, not under a path column.", "status": "resolved_in_model" },
-    { "id": "c.launch_fund_meaning", "topic": "$10K Launch Fund", "severity": "high",
+      "sheet_action": "Re-lay the sheet so the reserve sits under the house branch, not under a path column."
+    },
+    {
+      "id": "c.launch_fund_meaning",
+      "topic": "$10K Launch Fund",
+      "severity": "high",
+      "canonical_record": null,
+      "canonical_state": "superseded",
+      "superseded_by": "decision.launch_fund.floor_not_budget",
+      "resolution_reason": "The floor is an activation minimum. The computed ladder above it is the real requirement.",
       "sheet_says": "Older language reads as though $10,000 is the move budget.",
       "latest_decision": "$10,000 is an initial floor. The common physical move alone models to about $14,019.",
-      "proposed_resolution": "Relabel the sheet goal 'Launch floor (minimum to activate)' and add the ladder rungs.", "status": "resolved_in_model" },
-    { "id": "c.interview_state", "topic": "Current interview state", "severity": "low",
+      "sheet_action": "Relabel the sheet goal 'Launch floor (minimum to activate)' and add the ladder rungs."
+    },
+    {
+      "id": "c.interview_state",
+      "topic": "Current interview state",
+      "severity": "low",
+      "canonical_record": null,
+      "canonical_state": "superseded",
+      "superseded_by": "bm.hm_interview",
+      "resolution_reason": "The Sep 8 recruiter screen is recorded complete and the Sep 15 hiring-manager interview is the next scheduled event.",
       "sheet_says": "Older context treats September 8 as the upcoming interview.",
-      "latest_decision": "The Sep 8 recruiter screen is complete; the next scheduled event is Sep 15 with Cherie Hurwitz.",
-      "proposed_resolution": "Mark Sep 8 complete in the Disney Career tab.", "status": "resolved_in_model" }
+      "latest_decision": "Sep 8 complete; next event is Sep 15 with Cherie Hurwitz.",
+      "sheet_action": "Mark Sep 8 complete in the Disney Career tab."
+    }
   ]
 }

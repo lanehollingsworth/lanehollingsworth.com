@@ -3,6 +3,7 @@ import { buildReadiness } from './readiness.js';
 import { diffSnapshot } from './snapshot.js';
 import { checkFreshness } from '../research/freshness.js';
 import { computeHouse } from '../calculators/house-rent-vs-sell.js';
+import { supersededHistory } from '../lib/canonical.js';
 
 function upcoming(project, asOf, withinDays) {
   const items = [
@@ -60,7 +61,14 @@ export function buildPulse(project, { asOf, branch = 'house_sell', support = 'un
     intentionally_not_yet: project.project.blocked_until_trigger.slice(0, 4),
     risks_live: project.risks.risks.filter((r) => r.status === 'realized' || r.status === 'likely_realized_under_current_assumptions'),
     waiting_on: waitingOn,
-    decision_needed: readiness.open_contradictions.map((c) => ({ id: c.id, topic: c.topic, proposal: c.proposed_resolution })),
+    decision_needed: readiness.pending_resolution.map((item) => ({
+      id: item.id,
+      topic: item.label,
+      state: item.canonical_state,
+      needs: item.resolution_required,
+      proposal: item.resolution_rule,
+    })),
+    settled_this_phase: supersededHistory(project).length,
     honesty_note: waitingOn.length > 0 && actionable.length <= 3
       ? `Much of this week is genuinely waiting: ${waitingOn.map((t) => t.label).join('; ')}. Waiting is the correct action, not a gap to fill with invented work.`
       : null,

@@ -11,6 +11,26 @@ function readJson(name) {
 }
 
 /**
+ * Normalizes one assumption record onto the three-field state model.
+ *
+ * `status` was the Phase 1 name for evidence_type; it is still accepted as an
+ * input alias so older records keep working, and freshness thresholds key off
+ * evidence_type exactly as they keyed off status. canonical_state defaults to
+ * `confirmed` because an assumption in this file is, by definition, the value
+ * the model currently plans on - including when its evidence is only a
+ * planning placeholder. Those two facts are independent.
+ */
+export function normalizeAssumption(record) {
+  const { status, ...rest } = record;
+  return {
+    ...rest,
+    evidence_type: record.evidence_type ?? status,
+    canonical_state: record.canonical_state ?? 'confirmed',
+    verification_state: record.verification_state ?? 'not_externally_verified',
+  };
+}
+
+/**
  * Loads every data file and builds the assumption scope used by formulas.
  *
  * `overrides` is a plain map of assumption id -> number, used for "what if"
@@ -24,7 +44,7 @@ export function loadProject({ overrides = {} } = {}) {
 
   const assumptions = new Map();
   for (const assumption of raw.assumptions.assumptions) {
-    assumptions.set(assumption.id, { ...assumption });
+    assumptions.set(assumption.id, normalizeAssumption(assumption));
   }
 
   const appliedOverrides = [];
@@ -37,9 +57,11 @@ export function loadProject({ overrides = {} } = {}) {
     assumptions.set(id, {
       ...existing,
       value,
-      status: 'session_override',
+      evidence_type: 'session_override',
+      canonical_state: 'confirmed',
+      verification_state: 'not_applicable',
       confidence: 'session',
-      source: `session override (was ${existing.value} from ${existing.status})`,
+      source: `session override (was ${existing.value} from ${existing.evidence_type})`,
       overridden_from: existing.value,
     });
   }
@@ -63,6 +85,9 @@ export function loadProject({ overrides = {} } = {}) {
     community: raw.community,
     benefits: raw.benefits,
     readiness: raw.readiness,
+    canonical: raw['canonical-records'],
+    canonicalState: raw['canonical-state'],
+    decisions: raw.decisions,
     moveSequence: raw['move-sequence'],
     roadtrip: raw.roadtrip,
     assets: raw.assets,

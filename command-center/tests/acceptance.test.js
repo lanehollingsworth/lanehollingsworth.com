@@ -134,7 +134,9 @@ test('"Which spreadsheet records conflict with the latest decisions?"', () => {
   const ids = base.contradictions.items.map((c) => c.id);
   assert.ok(ids.includes('c.truck_disposition'));
   assert.ok(ids.includes('c.cherie_title'));
-  assert.ok(base.contradictions.items.every((c) => c.sheet_says && c.latest_decision && c.proposed_resolution));
+  // Phase 2 renamed `proposed_resolution` to `sheet_action` and added canonical_state.
+  assert.ok(base.contradictions.items.every((c) => c.sheet_says && c.latest_decision && c.sheet_action));
+  assert.ok(base.contradictions.items.every((c) => c.canonical_state));
   // Recruiting threads stay separate until a requisition proves otherwise.
   const cherieThreads = base.career.opportunities.filter((o) => o.id.startsWith('opp.cherie'));
   assert.equal(cherieThreads.length, 2);

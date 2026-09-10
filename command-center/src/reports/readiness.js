@@ -4,6 +4,7 @@ import { computeHouse } from '../calculators/house-rent-vs-sell.js';
 import { computeLaunchFund } from '../calculators/launch-fund.js';
 import { rankQuestions } from '../research/questions.js';
 import { checkFreshness } from '../research/freshness.js';
+import { pendingResolution } from '../lib/canonical.js';
 
 /**
  * Gate-aware readiness. No composite percentage: a single number would hide
@@ -72,7 +73,7 @@ export function buildReadiness(project, { branch = 'house_sell', support = 'unkn
     unpriced_items: budget.unpriced.length,
     top_questions: rankQuestions(project).rows.slice(0, 3),
     blocked_actions: project.project.blocked_until_trigger,
-    open_contradictions: project.contradictions.items.filter((c) => c.status === 'open' || c.status === 'awaiting_lane_approval'),
+    pending_resolution: pendingResolution(project),
     recurring_delta: round2(house.recurring_monthly_delta[branch].delta),
   };
 }

@@ -47,6 +47,17 @@ npm run cc -- budget --set roadtrip.tundra_mpg=17
 npm run cc -- budget --branch house_rent --support movers_hotels_reimbursed
 ```
 
+What the model believes, and why:
+
+```bash
+npm run cc -- canonical                          # canonical records and how firmly each is held
+npm run cc -- why vehicle.tundra.disposition     # belief + evidence + conflicts + decision history
+npm run cc -- why career.cherie_role.title       # a record that deliberately believes nothing
+npm run cc -- contradictions                     # unsettled conflicts vs superseded history
+npm run cc -- decisions                          # the decision log
+npm run cc -- validate                           # check canonical-state rules
+```
+
 When a trigger becomes real:
 
 ```bash
@@ -84,6 +95,58 @@ These are enforced in code and data, not in good intentions:
 - **A short runway is reported, not compressed.** If the required report date is
   earlier than the sequence allows, the timeline says "short by N days" and lists
   remedies — none of which is "drive longer days with the dogs."
+
+## Canonical state: three questions, three fields
+
+Phase 2 added state semantics alongside the existing evidence vocabulary rather
+than replacing it, because these are different questions:
+
+| Field | Question | Values |
+|---|---|---|
+| `evidence_type` | What kind of evidence is this? | verified, sheet_value, lane_confirmed, planning_assumption, historical_observation, research_lead |
+| `canonical_state` | What role does this value play in current state? | confirmed, unresolved, conflicting_sources, superseded |
+| `verification_state` | Has anyone outside this model confirmed it? | externally_verified, not_externally_verified, not_applicable |
+
+They stay orthogonal because the combinations are real. A **planning assumption
+can be the accepted canonical value** — the $4.25 gas price is a placeholder the
+model plans on today. A **verified document can be superseded** — the sheet's
+"Truck — Evaluate sale" row was once current and is now retired evidence. **Two
+externally verified sources can conflict** — an interview itinerary is an
+employer document and still does not settle the Cherie title, because the
+recruiting context says something else.
+
+`evidence_type` was named `status` in Phase 1. The loader still accepts `status`
+as an input alias, and freshness thresholds key off the field exactly as before.
+
+Rules in `data/canonical-state.json` are enforced by `npm run cc -- validate`
+and in tests: a `confirmed` record must have a value, `conflicting_sources` must
+have none plus at least two sources, `superseded` must point at what replaced it,
+and a superseded record must never reach the pending-resolution queue. Only
+`confirmed` is commitment-safe; planning continues around everything else.
+
+### The two migrated conflicts
+
+- **`vehicle.tundra.disposition`** — canonical value `drive_to_california`,
+  state `confirmed`, with the spreadsheet's `evaluate_sale` retained as a
+  `superseded` conflict entry. It is settled history, so it no longer shows up
+  as a decision Lane owes anyone. Review is scheduled 3–6 months after arrival.
+- **`career.cherie_role.title`** — canonical value `null`, state
+  `conflicting_sources`, `resolution_required: external_confirmation`. Both
+  titles are preserved with their own provenance. The record is keyed on the
+  role, not on a requisition number, because no requisition for it appears in
+  any source this model holds.
+
+A third record, **`house.orlando.disposition`**, is `unresolved` (evidence
+missing, not contradictory) — which is the distinction the vocabulary exists to
+draw. Lane leans toward selling; a lean is not a canonical value.
+
+## Decision log
+
+`data/decisions.json` records meaningful state changes as lightweight ADRs:
+subject, previous value, new value, reason, source, reversibility and a review
+date. `npm run cc -- why <id>` stitches a record's current belief together with
+its conflicts and its decision history, so the model can answer *why* it
+believes something, not only *what*.
 
 ## Data model
 
@@ -129,6 +192,13 @@ rent-vs-sell liquidity, the Nov 18 → Feb 2 timeline, staleness, the top three
 unresolved inputs, blocked actions, what changed, and which records conflict.
 `tests/model.test.js` locks the arithmetic to the figures the command center
 already publishes, so a refactor that quietly changes a total fails loudly.
+`tests/canonical.test.js` covers the Phase 2 state semantics: superseded values
+do not become open decisions, conflicting sources stay unresolved, the evidence
+vocabulary still drives freshness, overrides keep prior provenance, and the
+validator actually bites.
+
+CI runs `npm run cc:test` before `npm run build`, so the planning semantics are
+enforced on every PR rather than when someone remembers.
 
 ## Deliberately not built yet
 

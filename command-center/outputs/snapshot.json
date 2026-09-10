@@ -1,5 +1,5 @@
 {
-  "taken_at": "2026-09-10T19:22:57.167Z",
+  "taken_at": "2026-09-10T20:12:44.992Z",
   "as_of": "2026-09-10",
   "budgets": {
     "house_sell": {
@@ -87,9 +87,21 @@
     "q.tundra_mpg",
     "q.renters_insurance"
   ],
-  "open_contradictions": [
-    "c.truck_disposition",
-    "c.cherie_title",
+  "canonical_states": {
+    "vehicle.tundra.disposition": "confirmed",
+    "vehicle.tundra.disposition#conflict:0": "superseded",
+    "career.cherie_role.title": "conflicting_sources",
+    "house.orlando.disposition": "unresolved",
+    "c.truck_disposition": "superseded",
+    "c.cherie_title": "conflicting_sources",
+    "c.cherie_duplicate": "unresolved",
+    "c.path_vs_branch": "superseded",
+    "c.launch_fund_meaning": "superseded",
+    "c.interview_state": "superseded"
+  },
+  "pending_resolution": [
+    "career.cherie_role.title",
+    "house.orlando.disposition",
     "c.cherie_duplicate"
   ]
 }
