@@ -1,0 +1,33 @@
+{
+  "engine_notes": [
+    "Offsets are calendar days from the trigger date (a written offer or an approved work-location change).",
+    "Forward pass = earliest each step can happen. Backward pass = latest it can happen and still hit the required first office day.",
+    "Slack is the difference. Negative slack anywhere means the runway is too short and something must give: the report date, a remote transition period, or the sequence itself.",
+    "The terminal anchor is first_office_day. first_ca_paycheck floats after it and is informational.",
+    "Durations are calendar days, deliberately not working days: movers, landlords and dogs do not observe business hours."
+  ],
+  "steps": [
+    { "id": "capture_offer", "label": "Capture written terms in full", "duration_days": 1, "after": [], "gate": "gate_1", "category": "career", "irreversible": false },
+    { "id": "resolve_terms", "label": "Resolve relocation support, worksite, office cadence, start-date flexibility", "duration_days": 2, "after": [{ "id": "capture_offer" }], "gate": "gate_1", "category": "career", "irreversible": false },
+    { "id": "financial_gate", "label": "Run the financial-executability gate", "duration_days": 1, "after": [{ "id": "resolve_terms" }], "gate": "gate_2", "category": "finance", "irreversible": false },
+    { "id": "confirm_report_date", "label": "Confirm the target first Glendale reporting date", "duration_days": 1, "after": [{ "id": "resolve_terms" }], "gate": "gate_1", "category": "career", "irreversible": false },
+    { "id": "rental_search", "label": "Activate live California rental search", "duration_days": 7, "after": [{ "id": "financial_gate" }], "gate": "gate_3", "category": "ca_housing", "irreversible": false },
+    { "id": "mover_quotes", "label": "Refresh mover / container quotes", "duration_days": 7, "after": [{ "id": "financial_gate" }], "gate": "gate_5", "category": "household_move", "irreversible": false },
+    { "id": "house_branch_decision", "label": "Select the Orlando house branch", "duration_days": 5, "after": [{ "id": "financial_gate" }], "gate": "gate_4", "category": "house", "irreversible": false, "note": "Only if the evidence exists. A forced branch decision is worse than a deferred one." },
+    { "id": "rental_applications", "label": "Apply for top California rentals", "duration_days": 4, "after": [{ "id": "rental_search" }], "gate": "gate_3", "category": "ca_housing", "irreversible": false },
+    { "id": "lease_signed", "label": "Sign the California lease", "duration_days": 3, "after": [{ "id": "rental_applications" }, { "id": "confirm_report_date" }], "gate": "gate_3", "category": "ca_housing", "irreversible": true, "note": "First truly irreversible California commitment. Requires final job and location terms." },
+    { "id": "book_household_move", "label": "Book the household-goods move", "duration_days": 2, "after": [{ "id": "lease_signed" }, { "id": "mover_quotes" }], "gate": "gate_5", "category": "household_move", "irreversible": true },
+    { "id": "dog_travel_prep", "label": "Vet visit, medication trial, records, rehearsal drives", "duration_days": 14, "after": [{ "id": "confirm_report_date" }], "gate": "gate_5", "category": "pets", "irreversible": false, "note": "Starts early on purpose. Medication is trialled before departure, never on day one." },
+    { "id": "purge_pack", "label": "Orlando purge, sell, pack and prep", "duration_days": 21, "after": [{ "id": "house_branch_decision" }], "gate": "gate_4", "category": "declutter", "irreversible": false },
+    { "id": "orlando_prep_works", "label": "Deep clean, yard, handyman items", "duration_days": 7, "after": [{ "id": "purge_pack" }], "gate": "gate_4", "category": "house", "irreversible": false },
+    { "id": "tundra_service", "label": "Pre-trip Tundra service", "duration_days": 3, "after": [{ "id": "book_household_move" }], "gate": "gate_5", "category": "road_trip", "irreversible": false },
+    { "id": "utilities_address", "label": "Utilities, address changes, mail forwarding", "duration_days": 3, "after": [{ "id": "lease_signed" }], "gate": "gate_5", "category": "ca_setup", "irreversible": false },
+    { "id": "movers_pickup", "label": "Movers pick up household goods", "duration_days": 1, "after": [{ "id": "book_household_move", "lag_days": 14, "lag_reason": "carrier lead time" }, { "id": "purge_pack" }], "gate": "gate_5", "category": "household_move", "irreversible": true },
+    { "id": "depart_orlando", "label": "Lane, Klein and Tilly depart Orlando", "duration_days": 1, "after": [{ "id": "movers_pickup", "lag_days": 1 }, { "id": "tundra_service" }, { "id": "dog_travel_prep" }], "gate": "gate_5", "category": "road_trip", "irreversible": false },
+    { "id": "road_trip", "label": "Cross-country drive", "duration_formula": "roadtrip.travel_days", "duration_days": 6, "after": [{ "id": "depart_orlando" }], "gate": "gate_5", "category": "road_trip", "irreversible": false },
+    { "id": "arrival_buffer", "label": "Arrival buffer and basic setup", "duration_days": 5, "after": [{ "id": "road_trip" }], "gate": "gate_6", "category": "arrival", "irreversible": false, "note": "Protected time. Compressing this is how the first two weeks turn into evidence that the move was a mistake." },
+    { "id": "first_office_day", "label": "First required Glendale office day", "duration_days": 0, "after": [{ "id": "arrival_buffer" }], "gate": "gate_6", "category": "career", "terminal_anchor": true },
+    { "id": "orlando_handoff", "label": "List vacant, or place tenant, per the selected branch", "duration_days": 10, "after": [{ "id": "orlando_prep_works" }, { "id": "depart_orlando" }], "gate": "gate_4", "category": "house", "irreversible": false, "floats": true },
+    { "id": "first_ca_paycheck", "label": "First normal California paycheck", "duration_days": 0, "after": [{ "id": "first_office_day", "lag_days": 14, "lag_reason": "payroll cycle placeholder - confirm the real cycle" }], "gate": "gate_6", "category": "finance", "floats": true, "informational": true }
+  ]
+}

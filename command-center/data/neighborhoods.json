@@ -1,0 +1,24 @@
+{
+  "requirements": {
+    "core": ["~2 bedrooms", "at least 1 bathroom", "parking required (sized for a Tundra)", "dogs allowed", "secure outdoor space strongly preferred", "ground-floor condo/townhome or small house preferred", "private patio or yard preferred"],
+    "rent_target": 3200,
+    "commute_target_minutes": 45,
+    "commute_tolerance_note": "Lane may eventually tolerate roughly an hour if the neighborhood is worth it.",
+    "lifestyle": ["normal groceries, shopping and dining", "dog-walking practicality", "choir access", "arts and community", "Disney networking", "California tech/AI exposure", "character-rich neighborhood", "mid-century / postwar California feel"],
+    "term": "6-12 month rental. Year-one housing is infrastructure, not a forever-home decision."
+  },
+  "analysis_rule": "Do not infer safety from aesthetics. Score objective/current crime context, street and traffic context, nuisance factors, parking, dog practicality and commute separately from subjective vibe. A 'what would experienced longtime LA friends flag here?' lens is a hypothetical reality check only - never attribute it as a real person's opinion.",
+  "range_status": "planning_range",
+  "range_note": "2BR ranges below are planning ranges carried from research, not quotes. Refresh from live inventory at trigger time (q.ca_rent_inventory).",
+  "areas": [
+    { "id": "pasadena", "name": "Pasadena", "score": 9.0, "range_2br": [2800, 3800], "notes": ["Strong Glendale access", "Excellent choir and community fit", "Strongest overall gravity well"] },
+    { "id": "glendale", "name": "Glendale", "score": 8.5, "range_2br": [2900, 4000], "notes": ["Excellent work access", "Strong practical option"] },
+    { "id": "montrose_la_crescenta", "name": "Montrose / La Crescenta", "score": 8.5, "range_2br": [2800, 3800], "notes": ["High dog fit", "Strong community feel", "Good Glendale access"] },
+    { "id": "burbank", "name": "Burbank", "score": 8.0, "range_2br": [2900, 4000], "notes": ["Excellent work access", "Strong daily-life fit"] },
+    { "id": "atwater_frogtown", "name": "Atwater / Frogtown", "score": 7.5, "range_2br": [3000, 4200], "notes": ["Good character and social feel", "Less compelling overall than Pasadena / Glendale / Montrose at present"] },
+    { "id": "sunland_tujunga", "name": "Sunland-Tujunga", "score": null, "range_2br": null, "notes": ["To research"] },
+    { "id": "newhall", "name": "Newhall", "score": null, "range_2br": null, "notes": ["To research"] },
+    { "id": "sylmar_san_fernando", "name": "Sylmar / San Fernando", "score": null, "range_2br": null, "notes": ["To research"] },
+    { "id": "santa_clarita", "name": "Santa Clarita area", "score": null, "range_2br": null, "notes": ["To research"] }
+  ]
+}

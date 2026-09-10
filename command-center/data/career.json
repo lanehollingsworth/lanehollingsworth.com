@@ -1,0 +1,41 @@
+{
+  "note": "Career path and Orlando house branch are orthogonal dimensions. A path never implies a house branch.",
+  "paths": [
+    { "id": "path_a", "name": "New California Disney role", "status": "active",
+      "trigger": "Written offer plus an agreed work location and start transition.",
+      "current_actions": ["Prepare for and attend the hiring-manager interview", "Preserve selective applications", "Clarify title, location, start timing, office cadence, compensation and relocation support if the process advances"],
+      "waits_on_gate_1": ["California lease", "permanent housing purchase", "movers", "house disposition commitment", "large self-funded relocation spending"],
+      "relocation_support_status": "unknown",
+      "notes": "Do not keep volunteering to waive relocation support. Let Disney/HR state what applies." },
+    { "id": "path_b", "name": "Relocate current role to Glendale", "status": "active",
+      "trigger": "Leadership approval plus an HR-approved work-location change.",
+      "current_state": "Manager Michael is supportive and has investigated the process. Lane must initiate official intent, build a Glendale business justification, obtain leadership approval, then involve HR.",
+      "open_questions": ["Who is the actual approver?", "What business justification or evidence is required?", "What is the expected timeline?", "Does compensation change for California?", "What is the expected in-office cadence?", "Does relocation support apply?", "What is the official work-location effective date?", "Can there be a remote transition period?"],
+      "relocation_support_status": "unknown",
+      "notes": "Employment continuity may simplify risk and sequencing. It does NOT make the physical move cheaper - the same rent, household move, road trip, deposits and setup costs still exist unless Disney covers them." },
+    { "id": "path_c", "name": "Continued selective Disney California search", "status": "active",
+      "trigger": "A different California Disney role becomes professionally actionable and is a strong enough fit.",
+      "philosophy": ["Preserve optionality", "Prefer Principal / Lead-caliber roles where appropriate", "Generally look outside Disney Experiences, with Imagineering as the dream exception", "Do not chase a weak-fit role to satisfy the March target", "A career change should improve or at least preserve Lane's financial position"],
+      "relocation_support_status": "unknown" }
+  ],
+  "opportunities": [
+    { "id": "opp.cherie_spm2", "path": "path_a", "title_recorded": "Senior Product Manager II, Content & Media Platform", "org": "Content & Media Platform", "hiring_manager": "Cherie Hurwitz", "requisition": "unknown", "status": "hiring_manager_interview_scheduled",
+      "events": [ { "date": "2026-09-08", "label": "Recruiter screen", "state": "complete" }, { "date": "2026-09-15", "label": "Hiring-manager interview with Cherie Hurwitz, 5:00-5:45 PM ET", "state": "scheduled" } ],
+      "flags": ["title_discrepancy"], "contradiction_id": "c.cherie_title" },
+    { "id": "opp.cherie_principal_thread", "path": "path_c", "title_recorded": "Principal role - Cherie team", "requisition": "unknown", "status": "on_hold_pending_requisition_confirmation",
+      "flags": ["possible_duplicate"], "contradiction_id": "c.cherie_duplicate",
+      "notes": "Keep separate from opp.cherie_spm2 until the exact requisition is confirmed. Do not merge recruiting threads." },
+    { "id": "opp.imagineering_principal", "path": "path_c", "title_recorded": "Principal Product Manager - Imagineering", "requisition": "unknown", "status": "watching", "notes": "Dream exception to the look-outside-Experiences rule." },
+    { "id": "opp.espn_de_principal", "path": "path_c", "title_recorded": "Principal Product Manager - ESPN / Disney Entertainment, Glendale", "requisition": "unknown", "status": "watching" },
+    { "id": "opp.req_10154852", "path": "path_c", "title_recorded": "Role on Kathryn Lynyk's team", "requisition": "10154852", "hiring_manager": "Kathryn Lynyk", "status": "applied" },
+    { "id": "opp.req_10153453", "path": "path_c", "title_recorded": "Role on Chris Goss's team", "requisition": "10153453", "hiring_manager": "Chris Goss", "status": "applied" }
+  ],
+  "timing_benchmarks": [
+    { "id": "bm.recruiter_screen", "date": "2026-09-08", "label": "Initial recruiter interview", "status": "complete", "source": "historical_observation" },
+    { "id": "bm.hm_interview", "date": "2026-09-15", "label": "Hiring-manager interview with Cherie", "status": "scheduled", "source": "verified" },
+    { "id": "bm.90_day", "date": "2026-12-08", "label": "90-day planning benchmark", "status": "future", "source": "historical_observation" },
+    { "id": "bm.holiday_window", "date": "2027-01-01", "label": "Holiday-adjusted practical execution window opens (Jan-Mar 2027)", "status": "future", "source": "historical_observation" },
+    { "id": "bm.six_month", "date": "2027-03-08", "label": "Six-month observed benchmark", "status": "future", "source": "historical_observation" }
+  ],
+  "date_types_the_engine_distinguishes": ["interview", "decision", "offer", "acceptance", "start", "required_in_person", "work_location_effective", "lease_start", "household_goods_pickup", "orlando_handoff", "departure", "arrival", "first_office_day", "first_normal_ca_paycheck"]
+}

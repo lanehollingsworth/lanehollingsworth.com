@@ -1,0 +1,21 @@
+{
+  "vehicles": [
+    { "id": "tundra", "label": "Toyota Tundra", "current_decision": "Drive to California with the dogs, assuming mechanically sound.",
+      "reevaluate": "Ownership after roughly 3-6 months in California, once parking, fuel, commute and lifestyle realities are known.",
+      "stale_record": "Move/Sell/Store/Donate tab still reads 'Truck - Evaluate sale'", "contradiction_id": "c.truck_disposition",
+      "note": "Not the first asset to sell for move funding." },
+    { "id": "yamaha_mt03", "label": "Yamaha MT-03", "current_decision": "Evaluate sale", "miles": "<1000",
+      "note": "Possible move-funding source. Research resale value before the trigger; do not model proceeds until researched." }
+  ],
+  "pets": [
+    { "id": "klein", "label": "Klein", "constraint": "Climate-controlled cabin, restrained. Never the truck bed." },
+    { "id": "tilly", "label": "Tilly", "constraint": "Climate-controlled cabin, restrained. Never the truck bed." }
+  ],
+  "possessions_rule": "If it isn't meaningful and isn't worth paying to move 2,500 miles, challenge why it is coming.",
+  "possessions_criteria": ["emotional significance", "resale value", "replacement cost in California", "move-volume/cost impact", "fragility/risk", "time to replace", "immediate need on arrival", "whether selling creates useful move capital"],
+  "possessions_decisions": [
+    { "id": "king_bed", "label": "King bed and frame", "decision": "Sell before the move",
+      "reasoning": ["bulky", "replaceable", "avoids moving cost and volume", "clean California replacement", "closes an Orlando chapter"],
+      "budget_effect": "Raises ca_setup.first_week_basics; proceeds are not modeled until a real sale price exists." }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "as_of": "2026-09-10",
+  "tasks": [
+    { "id": "t.interview_prep", "label": "Prepare for the Cherie Hurwitz hiring-manager interview", "workstream": "career", "priority": "critical", "due": "2026-09-15", "status": "open", "gate": "gate_0" },
+    { "id": "t.interview_attend", "label": "Attend the Sep 15 hiring-manager interview", "workstream": "career", "priority": "critical", "due": "2026-09-15", "status": "scheduled", "gate": "gate_0" },
+    { "id": "t.selective_search", "label": "Continue the selective Disney California search", "workstream": "career", "priority": "high", "due": null, "status": "ongoing", "gate": "gate_0" },
+    { "id": "t.glendale_intent", "label": "Formally initiate Glendale relocation intent with Michael", "workstream": "career", "priority": "high", "due": "2026-09-30", "status": "open", "gate": "gate_0", "question_id": "q.glendale_approval_chain" },
+    { "id": "t.glendale_justification", "label": "Build the Glendale business justification", "workstream": "career", "priority": "high", "due": "2026-09-30", "status": "open", "gate": "gate_0" },
+    { "id": "t.glendale_approvers", "label": "Identify approvers and the HR process for a work-location change", "workstream": "career", "priority": "high", "due": "2026-09-30", "status": "open", "gate": "gate_0" },
+    { "id": "t.launch_fund_open", "label": "Open and designate the California Launch Fund account", "workstream": "finance", "priority": "high", "due": "2026-09-30", "status": "open", "gate": "gate_0", "question_id": "q.launch_fund_balance" },
+    { "id": "t.venture_payoff", "label": "Continue Venture X payoff at $300 per paycheck, stretch when the floor is protected", "workstream": "finance", "priority": "critical", "due": null, "status": "ongoing", "gate": "gate_0" },
+    { "id": "t.food_cap", "label": "Hold the $350/week all-food cap", "workstream": "finance", "priority": "medium", "due": null, "status": "ongoing", "gate": "gate_0" },
+    { "id": "t.no_invented_transfer", "label": "Do not invent an unresolved one-time brokerage transfer amount", "workstream": "finance", "priority": "medium", "due": null, "status": "standing_rule", "gate": "gate_0" },
+    { "id": "t.pm_responses", "label": "Collect the three property-management analyses and full fee schedules", "workstream": "house", "priority": "high", "due": "2026-09-30", "status": "awaiting_response", "gate": "gate_0", "question_id": "q.pm_fee_schedules" },
+    { "id": "t.cma", "label": "Get the Realtor CMA and seller-net estimate under both strategies", "workstream": "house", "priority": "high", "due": "2026-10-15", "status": "open", "gate": "gate_0", "question_id": "q.realtor_cma_net_sheet" },
+    { "id": "t.inspector", "label": "Select a replacement house inspector", "workstream": "house", "priority": "high", "due": "2026-10-01", "status": "open", "gate": "gate_0", "question_id": "q.replacement_inspection" },
+    { "id": "t.hvac_permit", "label": "Resolve HVAC permit / final inspection documentation", "workstream": "house", "priority": "medium", "due": "2026-10-01", "status": "open", "gate": "gate_0", "question_id": "q.hvac_permit" },
+    { "id": "t.rebuild_rent_vs_sell", "label": "Rebuild the rent-vs-sell model after inspection, PM quotes and CMA", "workstream": "house", "priority": "high", "due": "2026-10-31", "status": "blocked", "blocked_by": ["t.pm_responses", "t.cma", "t.inspector"], "gate": "gate_0" },
+    { "id": "t.readiness_nov15", "label": "November 15 readiness checkpoint", "workstream": "program", "priority": "medium", "due": "2026-11-15", "status": "scheduled", "gate": "gate_0" },
+    { "id": "t.benchmark_dec8", "label": "December 8 90-day benchmark review", "workstream": "program", "priority": "medium", "due": "2026-12-08", "status": "scheduled", "gate": "gate_0" },
+    { "id": "t.benchmark_mar8", "label": "March 8 six-month benchmark review", "workstream": "program", "priority": "medium", "due": "2027-03-08", "status": "scheduled", "gate": "gate_0" },
+    { "id": "t.inventory", "label": "Inventory Move / Sell / Store / Donate", "workstream": "declutter", "priority": "medium", "due": "2026-11-15", "status": "open", "gate": "gate_0" },
+    { "id": "t.yamaha_research", "label": "Research Yamaha MT-03 resale value", "workstream": "declutter", "priority": "low", "due": "2026-11-15", "status": "open", "gate": "gate_0", "question_id": "q.yamaha_resale" },
+    { "id": "t.sell_replace_logic", "label": "Apply sell-and-replace logic to bulky replaceable items", "workstream": "declutter", "priority": "medium", "due": null, "status": "ongoing", "gate": "gate_0" },
+    { "id": "t.neighborhood_research", "label": "Continue California neighborhood research", "workstream": "ca_housing", "priority": "low", "due": null, "status": "ongoing", "gate": "gate_0" },
+    { "id": "t.yoga_research", "label": "Research Southern California resort/hotel yoga-teaching opportunities", "workstream": "community", "priority": "low", "due": null, "status": "open", "gate": "gate_0" },
+    { "id": "t.annual_enrollment", "label": "Disney Annual Enrollment elections with relocation in mind", "workstream": "benefits", "priority": "high", "due": "2026-11-12", "status": "open", "gate": "gate_0", "question_id": "q.benefits_relocation" }
+  ]
+}

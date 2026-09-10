@@ -1,0 +1,95 @@
+{
+  "taken_at": "2026-09-10T19:22:57.167Z",
+  "as_of": "2026-09-10",
+  "budgets": {
+    "house_sell": {
+      "liquidity": 19153.71,
+      "net_cost": 14453.71
+    },
+    "house_rent": {
+      "liquidity": 31153.71,
+      "net_cost": 14453.71
+    },
+    "house_defer": {
+      "liquidity": 19153.71,
+      "net_cost": 14453.71
+    }
+  },
+  "house": {
+    "break_even_rent": 3698.13,
+    "guardrail_rent": 3249.41,
+    "modeled_subsidy": 1012.54
+  },
+  "assumptions": {
+    "roadtrip.route_miles": 2500,
+    "roadtrip.detour_buffer": 0.1,
+    "roadtrip.tundra_mpg": 15,
+    "roadtrip.gas_price": 4.25,
+    "roadtrip.travel_days": 6,
+    "roadtrip.hotel_nights": 5,
+    "roadtrip.hotel_rate": 175,
+    "roadtrip.hotel_pet_fee": 35,
+    "roadtrip.food_per_day": 65,
+    "roadtrip.tolls_misc": 100,
+    "roadtrip.pretrip_service": 250,
+    "ca_housing.monthly_rent": 3200,
+    "ca_housing.security_deposit": 3200,
+    "ca_housing.applications": 3,
+    "ca_housing.application_fee": 50,
+    "ca_housing.pet_move_in": 500,
+    "household.mover_container": 1800,
+    "household.packing_supplies": 250,
+    "household.valuation_insurance": 150,
+    "ca_setup.utilities_internet": 300,
+    "ca_setup.first_week_basics": 400,
+    "contingency.move": 1500,
+    "orlando.overlap_months": 1,
+    "orlando.mortgage_payment": 2884.54,
+    "orlando.inspection": 500,
+    "orlando.deep_clean": 450,
+    "orlando.yard_cleanup": 300,
+    "orlando.handyman": 1000,
+    "house.principal": 369767.08,
+    "house.interest_rate": 0.05125,
+    "house.principal_interest": 2069.25,
+    "house.escrow": 815.29,
+    "house.pm_rate": 0.1,
+    "house.vacancy_rate": 0.06,
+    "house.maintenance_rate": 0.06,
+    "house.expected_market_rent": 2400,
+    "house.landlord_reserve": 12000,
+    "house.readiness_reserve": 4000,
+    "house.subsidy_guardrail": 350,
+    "launch_fund.floor": 10000
+  },
+  "open_questions": [
+    "q.compensation_ca",
+    "q.realtor_cma_net_sheet",
+    "q.pm_market_rent",
+    "q.relocation_support",
+    "q.cherie_role_title",
+    "q.rsu_net",
+    "q.ca_rent_inventory",
+    "q.replacement_inspection",
+    "q.pm_fee_schedules",
+    "q.glendale_approval_chain",
+    "q.launch_fund_balance",
+    "q.office_cadence",
+    "q.yamaha_resale",
+    "q.mover_quote",
+    "q.benefits_relocation",
+    "q.storage_need",
+    "q.dog_travel_prep",
+    "q.hvac_permit",
+    "q.scouting_trip",
+    "q.ca_auto_insurance",
+    "q.ca_vehicle_registration",
+    "q.tundra_mpg",
+    "q.renters_insurance"
+  ],
+  "open_contradictions": [
+    "c.truck_disposition",
+    "c.cherie_title",
+    "c.cherie_duplicate"
+  ]
+}

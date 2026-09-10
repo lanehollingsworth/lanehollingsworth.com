@@ -53,6 +53,19 @@ Required Vercel env vars: `WRITE_PASSWORD`, `GITHUB_TOKEN`, `GITHUB_REPO`, `OAUT
 
 `/write` and `/admin` are private tooling (noindex) — exceptions to the single public page rule.
 
+## Command Center (not part of the site)
+
+`command-center/` is private relocation planning tooling — a decision engine, financial model and dated execution planner for the Orlando → Los Angeles move. It renders no pages, adds no dependencies, and `astro build` never touches it.
+
+```bash
+npm run cc -- readiness      # gate-aware status
+npm run cc -- pulse          # weekly relocation-readiness pulse
+npm run cc -- help           # everything else
+npm run cc:test              # Phase 1 acceptance tests
+```
+
+Rules that live in code there and should not be softened: liquidity is never reported as cost, employer relocation coverage is never assumed in either direction, unpriced items stay out of every total, windfalls stay out of the base case, and recruiting threads are never merged. Details in `command-center/README.md`.
+
 ## Dev
 
 ```bash

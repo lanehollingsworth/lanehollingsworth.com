@@ -1,0 +1,14 @@
+{
+  "note": "No single fake percentage. Each workstream reports a color, a reason, and the gate that makes its state appropriate or not. 'Not started' is fine when it is intentionally premature.",
+  "workstreams": [
+    { "id": "career", "label": "Career authorization", "commitment_gate": "gate_1", "blocking_questions": ["q.cherie_role_title", "q.glendale_approval_chain", "q.office_cadence"] },
+    { "id": "finance", "label": "Cash readiness", "commitment_gate": "gate_2", "blocking_questions": ["q.launch_fund_balance", "q.relocation_support", "q.compensation_ca"] },
+    { "id": "debt", "label": "Venture X debt", "commitment_gate": "gate_2", "blocking_questions": [] },
+    { "id": "house", "label": "Orlando house evidence", "commitment_gate": "gate_4", "blocking_questions": ["q.pm_market_rent", "q.pm_fee_schedules", "q.realtor_cma_net_sheet", "q.replacement_inspection", "q.hvac_permit"] },
+    { "id": "ca_housing", "label": "California housing", "commitment_gate": "gate_3", "blocking_questions": ["q.ca_rent_inventory"], "research_ok_before_gate": true },
+    { "id": "household_move", "label": "Household move", "commitment_gate": "gate_5", "blocking_questions": ["q.mover_quote", "q.storage_need"], "research_ok_before_gate": true },
+    { "id": "road_trip", "label": "Tundra and dogs", "commitment_gate": "gate_5", "blocking_questions": ["q.tundra_mpg", "q.dog_travel_prep"], "research_ok_before_gate": true },
+    { "id": "benefits", "label": "Benefits and California admin", "commitment_gate": "gate_2", "blocking_questions": ["q.benefits_relocation", "q.ca_vehicle_registration", "q.ca_auto_insurance"] },
+    { "id": "community", "label": "Community", "commitment_gate": "gate_6", "blocking_questions": [], "research_ok_before_gate": true, "intentionally_premature": true }
+  ]
+}

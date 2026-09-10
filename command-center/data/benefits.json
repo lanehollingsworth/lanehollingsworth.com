@@ -1,0 +1,14 @@
+{
+  "annual_enrollment": { "window_start": "2026-10-14", "window_end": "2026-11-12", "employer": "Disney", "status": "upcoming",
+    "track": ["Florida vs California provider networks", "premiums", "relocation compatibility", "active-election requirements", "whether a midyear relocation is a qualifying change or needs special handling"] },
+  "ca_admin_tasks": [
+    { "id": "admin.drivers_license", "label": "California driver license timing", "status": "open", "refresh_rule": "Verify current residency deadlines at execution." },
+    { "id": "admin.vehicle_registration", "label": "Tundra registration and title", "status": "open", "question_id": "q.ca_vehicle_registration" },
+    { "id": "admin.smog", "label": "Smog requirements", "status": "open" },
+    { "id": "admin.auto_insurance", "label": "Auto insurance conversion", "status": "open", "question_id": "q.ca_auto_insurance" },
+    { "id": "admin.renters_insurance", "label": "Renter's insurance", "status": "open", "question_id": "q.renters_insurance" },
+    { "id": "admin.residency", "label": "Voter and other residency administration", "status": "open" },
+    { "id": "admin.dog_licensing", "label": "Dog licensing and local requirements", "status": "open" }
+  ],
+  "standing_rule": "Refresh every legal or regulatory item from current official sources near execution. A 2026 answer does not bind a 2027 move."
+}

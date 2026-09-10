@@ -1,0 +1,49 @@
+{
+  "id": "california_move",
+  "title": "California Move Command Center",
+  "planning_date": "2026-09-10",
+  "north_star": "Live in Los Angeles County in a Disney role by March 2027. Activate the move only when a pathway is professionally authorized and financially executable.",
+  "horizon": "2027-03-31",
+  "origin": "Orlando, FL",
+  "destination": "Los Angeles County, CA",
+  "human_source_of_truth": "Google Sheet: Lane California Move Command Center",
+  "machine_source_of_truth": "command-center/data/*.json",
+  "guardrails": [
+    { "id": "guard.emergency_fund", "rule": "Emergency fund is not move capital and is never counted in the California Launch Fund." },
+    { "id": "guard.near_term_cash", "rule": "Money needed inside the relocation horizon must be cash-like, not volatile single-stock exposure." },
+    { "id": "guard.categories", "rule": "Never describe a liquidity requirement as a cost. Spend, refundable, reserve, contingency and recurring exposure are reported separately." },
+    { "id": "guard.no_assumed_relocation", "rule": "Employer relocation coverage is 'unknown' until stated in writing. Never model coverage silently, and never model self-funding silently either." },
+    { "id": "guard.rent_subsidy", "rule": "Maximum acceptable modeled average Orlando rental subsidy is $350/month.", "value": 350, "unit": "usd_per_month" },
+    { "id": "guard.march_is_a_star", "rule": "March 2027 is a North Star, not permission to make a bad decision. No irreversible commitment before Gate 1 + Gate 2." },
+    { "id": "guard.dogs", "rule": "Klein and Tilly travel in the climate-controlled cabin, restrained, never in the bed. Optimize the road trip for safety, not speed." },
+    { "id": "guard.arrival_grace", "rule": "Do not evaluate whether California was a mistake during the first 14 days." },
+    { "id": "guard.no_invention", "rule": "Unknown values stay TBD or ranged. Never manufacture precision, never promote a research lead to a verified fact." }
+  ],
+  "gates": [
+    { "id": "gate_0", "name": "Research readiness", "state": "open",
+      "allowed": ["quotes", "research", "interviews", "decluttering", "inspection", "CMA", "budget modeling", "community research", "benefits research"],
+      "blocked": ["California lease signature", "nonrefundable major move services", "listing the Orlando house on the strength of an application alone"] },
+    { "id": "gate_1", "name": "Professional authorization", "state": "not_met",
+      "requires_any": ["written California offer", "approved current-role California work-location change"] },
+    { "id": "gate_2", "name": "Financial executability", "state": "not_met",
+      "requires_all": ["compensation confirmed", "relocation support status stated", "net available move cash", "Venture X debt status", "launch fund position", "deposit estimate", "household move quote", "road trip budget", "Orlando overlap", "house branch", "contingency intact"] },
+    { "id": "gate_3", "name": "California housing executable", "state": "not_met",
+      "requires_all": ["worksite + office cadence", "commute tested", "lease terms", "dogs accepted", "parking fits Tundra", "total move-in cash", "lease timing aligned to employment transition"] },
+    { "id": "gate_4", "name": "Orlando house branch selected", "state": "not_met",
+      "requires_any": ["sell", "rent", "defer"] },
+    { "id": "gate_5", "name": "Move booked", "state": "not_met",
+      "requires_all": ["household goods plan", "Tundra service", "dog plan", "hotels", "departure date", "utilities", "address changes", "California arrival setup"] },
+    { "id": "gate_6", "name": "Arrival stabilization", "state": "not_met",
+      "requires_all": ["14 days basic mode", "first-90-day community activation"] }
+  ],
+  "blocked_until_trigger": [
+    { "action": "Sign a California lease", "unblocked_by": "gate_3", "reason": "Lease terms must follow final worksite, start date and office cadence." },
+    { "action": "Book movers or a container (nonrefundable)", "unblocked_by": "gate_2", "reason": "Quotes are free before the trigger; deposits are not refundable after it." },
+    { "action": "List the Orlando house", "unblocked_by": "gate_1", "reason": "An interview or application is not authorization." },
+    { "action": "Buy a California home", "unblocked_by": "post_arrival", "reason": "Year one is rental infrastructure, not a forever-home decision." },
+    { "action": "Liquidate brokerage to pre-fund the move", "unblocked_by": "gate_2", "reason": "Long-term investments are not the core Launch Fund source; size the real requirement first." },
+    { "action": "Volunteer to waive relocation support", "unblocked_by": "never", "reason": "Let Disney/HR state what applies." },
+    { "action": "Sell the Tundra", "unblocked_by": "post_arrival_90d", "reason": "Current plan is to drive it; re-evaluate ownership after 3-6 months of real California parking, fuel and commute." },
+    { "action": "Activate more than 1-2 community anchors", "unblocked_by": "gate_6", "reason": "Choir first; expansion is a first-90-day decision, not a move-week one." }
+  ]
+}

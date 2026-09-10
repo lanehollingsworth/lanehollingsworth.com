@@ -1,0 +1,29 @@
+{
+  "rule": "Reconcile explicitly. Never silently overwrite a human-facing record; surface the conflict, propose the correction, and wait for Lane to approve it.",
+  "items": [
+    { "id": "c.truck_disposition", "topic": "Truck disposition", "severity": "medium",
+      "sheet_says": "Move/Sell/Store/Donate tab: 'Truck - Evaluate sale'",
+      "latest_decision": "Drive the Toyota Tundra to California with the dogs; re-evaluate ownership after 3-6 months in California.",
+      "proposed_resolution": "Update the sheet row to 'Truck - Drive to CA; re-evaluate ownership at 3-6 months'.", "status": "awaiting_lane_approval" },
+    { "id": "c.cherie_title", "topic": "Cherie role title", "severity": "high",
+      "sheet_says": "Senior Product Manager II, Content & Media Platform, with an interview itinerary reportedly using 'Sr Principal' wording.",
+      "latest_decision": "Unresolved - do not guess.",
+      "proposed_resolution": "Ask the recruiter to confirm the exact posted title, level and requisition ID, then correct one record.", "status": "open", "question_id": "q.cherie_role_title" },
+    { "id": "c.cherie_duplicate", "topic": "Second Cherie thread", "severity": "medium",
+      "sheet_says": "A separate 'Principal role - Cherie team' record exists.",
+      "latest_decision": "May be a duplicate or title confusion. Held separately on purpose.",
+      "proposed_resolution": "Keep opp.cherie_principal_thread on hold until the requisition is confirmed. Do not merge recruiting threads.", "status": "on_hold" },
+    { "id": "c.path_vs_branch", "topic": "Career path vs house branch", "severity": "medium",
+      "sheet_says": "The granular move table shows the landlord-reserve line alongside the Path A/B/C columns, implying a path selects a house branch.",
+      "latest_decision": "House disposition is orthogonal to career path.",
+      "proposed_resolution": "Model them as two independent dimensions (this repo does) and re-lay the sheet so the reserve sits under the house branch, not under a path column.", "status": "resolved_in_model" },
+    { "id": "c.launch_fund_meaning", "topic": "$10K Launch Fund", "severity": "high",
+      "sheet_says": "Older language reads as though $10,000 is the move budget.",
+      "latest_decision": "$10,000 is an initial floor. The common physical move alone models to about $14,019.",
+      "proposed_resolution": "Relabel the sheet goal 'Launch floor (minimum to activate)' and add the ladder rungs.", "status": "resolved_in_model" },
+    { "id": "c.interview_state", "topic": "Current interview state", "severity": "low",
+      "sheet_says": "Older context treats September 8 as the upcoming interview.",
+      "latest_decision": "The Sep 8 recruiter screen is complete; the next scheduled event is Sep 15 with Cherie Hurwitz.",
+      "proposed_resolution": "Mark Sep 8 complete in the Disney Career tab.", "status": "resolved_in_model" }
+  ]
+}
