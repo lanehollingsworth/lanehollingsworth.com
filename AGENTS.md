@@ -39,6 +39,39 @@ When recommending changes, updates, or process:
 - Don’t put posts only in a remote CMS without a git backup.
 - Don’t optimize for “admin dashboard nostalgia” at the cost of durability — unless Lane wants a private write UI *with* git as source of truth.
 
+## Publishing (git is truth)
+
+Three private front doors, one path into git → Vercel redeploy. Details in `PUBLISHING.md`.
+
+| Front door | URL | Auth |
+|------------|-----|------|
+| Write page | `/write` | `WRITE_PASSWORD` |
+| iOS Shortcut | `POST /api/publish` | same password |
+| Decap CMS | `/admin/` | GitHub OAuth |
+
+Required Vercel env vars: `WRITE_PASSWORD`, `GITHUB_TOKEN`, `GITHUB_REPO`, `OAUTH_GITHUB_CLIENT_ID`, `OAUTH_GITHUB_CLIENT_SECRET`.
+
+`/write` and `/admin` are private tooling (noindex) — exceptions to the single public page rule.
+
+## Command Center (not part of the site)
+
+`command-center/` is Lane Command Center: private tooling that maintains an evidence-based model of goals, commitments, resources, decisions, risks and attention. **California Move is its first program, not its identity** — see `command-center/docs/ADR-001-lane-command-center.md`. It renders no pages, adds no dependencies, and `astro build` never touches it.
+
+```bash
+npm run cc -- readiness      # gate-aware status
+npm run cc -- pulse          # weekly relocation-readiness pulse
+npm run cc -- verify         # prove the machinery works; exits non-zero if it does not
+npm run cc -- attention      # what deserves attention today, and what deliberately does not
+npm run cc -- rules          # rule lifecycles, authority, what a program completion retires
+npm run cc -- why <id>       # why the model believes a value
+npm run cc -- validate       # canonical-state rule check
+npm run cc -- help           # everything else
+npm run cc:test              # acceptance and platform tests
+npm run cc:verify            # verification report (CI gates on it)
+```
+
+Rules that live in code there and should not be softened: liquidity is never reported as cost, employer relocation coverage is never assumed in either direction, unpriced items stay out of every total, windfalls stay out of the base case, and recruiting threads are never merged. Proof over confidence: nothing is reported as working because implementation finished — evidence must match the claim (a CLI claim needs a real CLI run, an integration claim a real request), and proof goes stale when its sources change. Core objects stay generic (Task, Decision, Risk, Rule) with `program` and `domain` tags — never `MoveTask`. Rules retire with the program that owns them; enduring preferences do not. An inference may raise a review trigger, never overrule a decision. State carries three orthogonal fields — `evidence_type` (what kind of evidence), `canonical_state` (what role it plays now), `verification_state` (confirmed by anyone outside) — and collapsing them is a regression, not a cleanup. Details in `command-center/README.md`.
+
 ## Dev
 
 ```bash

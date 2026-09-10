@@ -1,0 +1,79 @@
+{
+  "note": "Canonical records hold contested or decision-bearing state: what the model currently believes, what disagrees with it, and what it would take to settle. Vocabulary and validation rules live in canonical-state.json.",
+  "records": [
+    {
+      "id": "vehicle.tundra.disposition",
+      "subject": "Toyota Tundra disposition",
+      "canonical_value": "drive_to_california",
+      "canonical_state": "confirmed",
+      "evidence_type": "lane_confirmed",
+      "verification_state": "not_applicable",
+      "decided_by": "decision.tundra.drive_to_ca",
+      "reversible": true,
+      "review_after": "3-6 months after California arrival",
+      "detail": [
+        "Drive the Tundra from Orlando to California with Klein and Tilly.",
+        "Household goods move separately.",
+        "Not a pre-move funding source.",
+        "Re-evaluate keeping or selling once parking, commute, fuel use and daily utility are known."
+      ],
+      "conflicts": [
+        {
+          "value": "evaluate_sale",
+          "source": "Move Sell Store Donate spreadsheet row",
+          "source_date": null,
+          "evidence_type": "sheet_value",
+          "verification_state": "not_externally_verified",
+          "canonical_state": "superseded",
+          "superseded_by": "vehicle.tundra.disposition",
+          "resolution_reason": "Later decision is to drive the Tundra to California and reassess ownership after 3-6 months."
+        }
+      ],
+      "sheet_action": "Update the Move/Sell/Store/Donate row to 'Truck - Drive to CA; re-evaluate ownership at 3-6 months'. Until then the row is a superseded source, not an open decision."
+    },
+    {
+      "id": "career.cherie_role.title",
+      "subject": "Title for the Content & Media Platform role (hiring manager Cherie Hurwitz)",
+      "canonical_value": null,
+      "canonical_state": "conflicting_sources",
+      "resolution_required": "external_confirmation",
+      "resolution_rule": "Confirm with the recruiter or interview team. Do not infer the title from either source alone, and do not let the level implied by either source drive compensation expectations.",
+      "question_id": "q.cherie_role_title",
+      "blocks_gates": ["gate_1"],
+      "requisition_id": null,
+      "requisition_note": "The Phase 2 brief keyed its example on `career.req_10158541.title`. No requisition number for this role appears in any source this model holds, so the record is keyed on the role instead. If 10158541 is the real requisition, add it as a verified fact and the id can follow it.",
+      "sources": [
+        {
+          "value": "Senior Product Manager II",
+          "source": "Original recruiting / job context",
+          "source_date": null,
+          "evidence_type": "lane_confirmed",
+          "verification_state": "not_externally_verified"
+        },
+        {
+          "value": "Sr Principal Product Manager, Content & Media Platform",
+          "source": "Interview itinerary",
+          "source_date": null,
+          "evidence_type": "verified",
+          "verification_state": "externally_verified",
+          "note": "An employer-issued document, which makes it externally verified - and still not decisive, because it conflicts with the recruiting context."
+        }
+      ],
+      "related_records": ["opp.cherie_spm2", "opp.cherie_principal_thread"],
+      "merge_rule": "The two Cherie-related opportunity threads stay separate until a requisition ID proves they are one."
+    },
+    {
+      "id": "house.orlando.disposition",
+      "subject": "Orlando house branch: sell, rent or defer",
+      "canonical_value": null,
+      "canonical_state": "unresolved",
+      "resolution_required": "evidence_collection",
+      "resolution_rule": "Rebuild the rent-vs-sell model once PM market rents and fee schedules, the Realtor CMA and seller net, and the replacement inspection are in hand. Renting must earn the right to beat selling on written numbers.",
+      "evidence_outstanding": ["q.pm_market_rent", "q.pm_fee_schedules", "q.realtor_cma_net_sheet", "q.replacement_inspection", "q.hvac_permit"],
+      "lean": "selling",
+      "lean_note": "A lean is not a canonical value. The branch stays unresolved so the model keeps pricing all three.",
+      "blocks_gates": ["gate_4"],
+      "verification_state": "not_applicable"
+    }
+  ]
+}

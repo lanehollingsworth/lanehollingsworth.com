@@ -1,0 +1,35 @@
+backend:
+  name: github
+  repo: lanehollingsworth/lanehollingsworth.com
+  branch: main
+  base_url: https://lanehollingsworth.com
+  auth_endpoint: api/auth
+
+local_backend: false
+publish_mode: simple
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+collections:
+  - name: posts
+    label: Posts
+    folder: src/content/posts
+    create: true
+    slug: '{{slug}}'
+    extension: md
+    format: yaml-frontmatter
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Publish Date, name: pubDate, widget: datetime, date_format: YYYY-MM-DD, time_format: false }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: Tags, name: tags, widget: list, default: ['journal'] }
+      - label: Photos
+        name: photos
+        widget: list
+        required: false
+        fields:
+          - { label: Image, name: src, widget: image }
+          - { label: Alt text, name: alt, widget: string, required: false }
+          - { label: Caption, name: caption, widget: string, required: false }
+      - { label: Body, name: body, widget: markdown, required: false }

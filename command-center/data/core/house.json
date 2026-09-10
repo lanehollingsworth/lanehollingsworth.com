@@ -1,0 +1,48 @@
+{
+  "asset": { "id": "orlando_bungalow", "label": "Orlando 1928 bungalow", "area": "32806",
+    "framing": "Renting must earn the right to beat selling.",
+    "emotional_note": "Real attachment. The model exists so nostalgia does not override the math - and so the math does not pretend the attachment is worthless." },
+  "decision_state": "open",
+  "lean": "selling",
+  "lean_note": "Lane increasingly leans toward selling. The decision is NOT final and the model must not close it early.",
+  "mortgage": { "principal": 369767.08, "rate": 0.05125, "principal_interest": 2069.25, "escrow": 815.29, "scheduled_payment": 2884.54,
+    "remaining_amortization_months": 338, "amortization_note": "Derived planning calculation (~28.2 years), not a substitute for the contractual maturity date." },
+  "branches": [
+    { "id": "house_sell", "label": "Sell", "status": "candidate",
+      "case_for": ["Lane strongly dislikes living through constant showings", "Removes remote-landlord complexity", "Orlando equity becomes California capital", "Clean break reduces cognitive and logistical load"],
+      "unresolved": ["q.realtor_cma_net_sheet", "q.replacement_inspection"] },
+    { "id": "house_rent", "label": "Rent", "status": "candidate",
+      "case_for": ["Preserves an Orlando asset", "Preserves future appreciation and optionality", "Tenant offsets a meaningful portion of carrying cost", "Allows a later sale while vacant"],
+      "case_against": ["Not naturally cash-flow positive under the current mortgage", "A large landlord reserve ties up capital", "Remote-landlord risk"],
+      "unresolved": ["q.pm_market_rent", "q.pm_fee_schedules", "q.replacement_inspection"] },
+    { "id": "house_defer", "label": "Temporarily hold / defer", "status": "candidate",
+      "case_for": ["Removes a decision from the compressed move window", "Allows listing vacant after departure"],
+      "case_against": ["Full carrying cost with no offset for every deferred month"] }
+  ],
+  "sale_workstream": {
+    "status": "not_started",
+    "strategies": [
+      { "id": "strategy_a", "label": "Clean exit", "target": "Under contract in roughly 2-3 weeks without giving the property away." },
+      { "id": "strategy_b", "label": "Maximum reasonable proceeds", "target": "Price and strategy assuming roughly 30-45 days of market exposure." }
+    ],
+    "collect_per_strategy": ["probable list price", "realistic expected sale price", "seller net", "actual 32806 comps", "recommended repairs vs leave-as-is", "staging recommendation", "photography/video plan", "launch-day marketing plan", "showing strategy", "what happens with no offer by day 7 / 14 / 21", "remote management after Lane leaves Florida", "occupied vs vacant recommendation"],
+    "preferred_sequence": ["California job/authorization becomes real", "Secure California rental", "Purge/sell bulky possessions", "Movers remove what is going", "Lane + Klein + Tilly drive the Tundra west", "Final clean / stage / photos", "List vacant"],
+    "sequence_note": "Temporary overlap between California rent and the Orlando mortgage may be rational if it substantially reduces stress and improves sale execution. That is a deliberate purchase of calm, not a mistake."
+  },
+  "property_management_workstream": {
+    "status": "contacted_awaiting_responses",
+    "firms_contacted": 3,
+    "compare_on": "Net owner distribution, not the highest promised rent.",
+    "requested": ["market rent", "quick-rent price", "placement/vacancy expectations", "management percentage", "leasing/placement fee", "renewal fee", "owner reserve", "maintenance markup", "inspections", "onboarding costs", "other charges", "expected owner distribution"]
+  },
+  "inspection": {
+    "baseline_year": 2024,
+    "prior_inspector": { "name": "Glenn", "status": "retired_and_moved", "action": "Replacement inspector needed." },
+    "compare": "2024 baseline -> repairs completed -> 2026 condition",
+    "classify_into": ["must address", "address soon", "cosmetic", "specialist required"],
+    "baseline_items": ["crawlspace support concerns", "attic rodent access/contamination and insulation", "HVAC plenum/chase/duct issues", "electrical GFCI / open neutral / exposed wiring / weatherproofing", "gutters", "window latches", "shower enclosure", "smoke batteries", "dryer vent", "deck cleanup", "crawlspace screens"]
+  },
+  "hvac": { "replacement_cost": 7600, "status": "complete", "documentation": "Major equipment and warranty paperwork assembled.",
+    "unresolved": "Permit / final municipal mechanical inspection approval proof.",
+    "rule": "A permitting agreement is not proof that a permit was closed and finaled." }
+}

@@ -1,0 +1,64 @@
+{
+  "type_legend": {
+    "spend": "Money that leaves and does not come back.",
+    "refundable": "Cash Lane must have, expected back later (deposits).",
+    "reserve": "Lane's capital, parked, not consumed unless used.",
+    "contingency": "Liquidity that should ideally remain unspent.",
+    "exposure": "Carrying cost incurred only while an overlap lasts."
+  },
+  "timing_legend": {
+    "before_trigger": "Spendable now without waiting for authorization.",
+    "post_trigger": "Days after a written offer or approved location change.",
+    "pre_departure": "2-4 weeks before the truck leaves Orlando.",
+    "move_week": "The road-trip week itself.",
+    "first_ca_month": "First 30 days in California.",
+    "house_branch": "Triggered by the Orlando house branch decision."
+  },
+  "items": [
+    { "id": "roadtrip.fuel", "label": "Gasoline", "workstream": "road_trip", "scope": "common", "type": "spend", "timing": "move_week", "formula": "roadtrip.route_miles * (1 + roadtrip.detour_buffer) / roadtrip.tundra_mpg * roadtrip.gas_price", "employer_coverable": true, "confidence": "medium" },
+    { "id": "roadtrip.hotels", "label": "Hotel nights", "workstream": "road_trip", "scope": "common", "type": "spend", "timing": "move_week", "formula": "roadtrip.hotel_nights * roadtrip.hotel_rate", "employer_coverable": true, "confidence": "low" },
+    { "id": "roadtrip.hotel_pet_fees", "label": "Hotel pet fees", "workstream": "road_trip", "scope": "common", "type": "spend", "timing": "move_week", "formula": "roadtrip.hotel_nights * roadtrip.hotel_pet_fee", "employer_coverable": false, "confidence": "low", "notes": "Relocation policies frequently exclude pet fees. Assume Lane pays until told otherwise." },
+    { "id": "roadtrip.food", "label": "Road food and water", "workstream": "road_trip", "scope": "common", "type": "spend", "timing": "move_week", "formula": "roadtrip.travel_days * roadtrip.food_per_day", "employer_coverable": true, "confidence": "medium" },
+    { "id": "roadtrip.tolls_misc", "label": "Tolls, parking, miscellaneous", "workstream": "road_trip", "scope": "common", "type": "spend", "timing": "move_week", "formula": "roadtrip.tolls_misc", "employer_coverable": false, "confidence": "low" },
+    { "id": "roadtrip.pretrip_service", "label": "Pre-trip Tundra service", "workstream": "road_trip", "scope": "common", "type": "spend", "timing": "pre_departure", "formula": "roadtrip.pretrip_service", "employer_coverable": false, "confidence": "medium" },
+
+    { "id": "ca_housing.first_month_rent", "label": "First month rent", "workstream": "ca_housing", "scope": "common", "type": "spend", "timing": "post_trigger", "formula": "ca_housing.monthly_rent", "employer_coverable": false, "confidence": "medium" },
+    { "id": "ca_housing.security_deposit", "label": "Security deposit", "workstream": "ca_housing", "scope": "common", "type": "refundable", "timing": "post_trigger", "formula": "ca_housing.security_deposit", "employer_coverable": false, "confidence": "low", "notes": "Cash Lane must have on hand, expected back at lease end minus damages." },
+    { "id": "ca_housing.application_fees", "label": "Rental application fees", "workstream": "ca_housing", "scope": "common", "type": "spend", "timing": "post_trigger", "formula": "ca_housing.applications * ca_housing.application_fee", "employer_coverable": false, "confidence": "medium" },
+    { "id": "ca_housing.pet_move_in", "label": "Pet deposit / move-in pet fees", "workstream": "ca_housing", "scope": "common", "type": "spend", "timing": "post_trigger", "formula": "ca_housing.pet_move_in", "employer_coverable": false, "confidence": "low", "notes": "Modeled as spend because the refundable share is unknown. Split once a lease exists." },
+
+    { "id": "household_move.mover", "label": "Mover or container", "workstream": "household_move", "scope": "common", "type": "spend", "timing": "pre_departure", "formula": "household.mover_container", "employer_coverable": true, "confidence": "low" },
+    { "id": "household_move.supplies", "label": "Packing supplies", "workstream": "household_move", "scope": "common", "type": "spend", "timing": "pre_departure", "formula": "household.packing_supplies", "employer_coverable": true, "confidence": "medium" },
+    { "id": "household_move.valuation", "label": "Mover insurance / valuation", "workstream": "household_move", "scope": "common", "type": "spend", "timing": "pre_departure", "formula": "household.valuation_insurance", "employer_coverable": true, "confidence": "low" },
+
+    { "id": "ca_setup.utilities", "label": "Utility and internet setup", "workstream": "ca_setup", "scope": "common", "type": "spend", "timing": "first_ca_month", "formula": "ca_setup.utilities_internet", "employer_coverable": false, "confidence": "medium" },
+    { "id": "ca_setup.basics", "label": "First-week household basics", "workstream": "ca_setup", "scope": "common", "type": "spend", "timing": "first_ca_month", "formula": "ca_setup.first_week_basics", "employer_coverable": false, "confidence": "medium" },
+
+    { "id": "contingency.move", "label": "Move contingency", "workstream": "contingency", "scope": "common", "type": "contingency", "timing": "move_week", "formula": "contingency.move", "employer_coverable": false, "confidence": "medium" },
+
+    { "id": "orlando.mortgage_overlap", "label": "Orlando mortgage overlap", "workstream": "orlando_transition", "scope": "orlando_transition", "type": "exposure", "timing": "first_ca_month", "formula": "orlando.overlap_months * orlando.mortgage_payment", "employer_coverable": false, "confidence": "medium", "notes": "Exposure per month of overlap, not a fixed cost. Every extra month is another $2,884.54." },
+    { "id": "orlando.inspection", "label": "Replacement house-health inspection", "workstream": "orlando_transition", "scope": "orlando_transition", "type": "spend", "timing": "before_trigger", "formula": "orlando.inspection", "employer_coverable": false, "confidence": "medium", "notes": "Gate 0 spend. Buys evidence for the rent-vs-sell decision before any trigger." },
+    { "id": "orlando.deep_clean", "label": "Final deep clean", "workstream": "orlando_transition", "scope": "orlando_transition", "type": "spend", "timing": "pre_departure", "formula": "orlando.deep_clean", "employer_coverable": false, "confidence": "medium" },
+    { "id": "orlando.yard_cleanup", "label": "Yard / curb-appeal cleanup", "workstream": "orlando_transition", "scope": "orlando_transition", "type": "spend", "timing": "pre_departure", "formula": "orlando.yard_cleanup", "employer_coverable": false, "confidence": "medium" },
+    { "id": "orlando.handyman", "label": "Handyman / small repairs", "workstream": "orlando_transition", "scope": "orlando_transition", "type": "spend", "timing": "pre_departure", "formula": "orlando.handyman", "employer_coverable": false, "confidence": "low" },
+
+    { "id": "house_rent.landlord_reserve", "label": "Landlord reserve", "workstream": "house_branch", "scope": "house_rent", "type": "reserve", "timing": "house_branch", "formula": "house.landlord_reserve", "employer_coverable": false, "confidence": "medium", "notes": "Still Lane's capital. Required liquidity, not a cost." }
+  ],
+  "unpriced_items": [
+    { "id": "ca_admin.vehicle_registration", "label": "California Tundra registration, title and smog", "workstream": "ca_admin", "scope": "common", "type": "spend", "timing": "first_ca_month", "question_id": "q.ca_vehicle_registration" },
+    { "id": "ca_admin.auto_insurance_delta", "label": "California auto insurance premium change", "workstream": "ca_admin", "scope": "common", "type": "recurring", "timing": "first_ca_month", "question_id": "q.ca_auto_insurance" },
+    { "id": "ca_admin.renters_insurance", "label": "Renter's insurance", "workstream": "ca_admin", "scope": "common", "type": "recurring", "timing": "first_ca_month", "question_id": "q.renters_insurance" },
+    { "id": "pets.travel_prep", "label": "Dog vet visit, travel meds, health documentation, travel supplies", "workstream": "pets", "scope": "common", "type": "spend", "timing": "pre_departure", "question_id": "q.dog_travel_prep" },
+    { "id": "household_move.storage", "label": "Temporary storage if sequencing requires it", "workstream": "household_move", "scope": "common", "type": "spend", "timing": "pre_departure", "question_id": "q.storage_need" },
+    { "id": "house_rent.pm_leasing_fee", "label": "Property-manager setup / leasing fee", "workstream": "house_branch", "scope": "house_rent", "type": "spend", "timing": "house_branch", "question_id": "q.pm_fee_schedules" },
+    { "id": "house_sell.seller_specific", "label": "Seller-specific prep and transaction cash beyond the modeled prep", "workstream": "house_branch", "scope": "house_sell", "type": "spend", "timing": "house_branch", "question_id": "q.realtor_cma_net_sheet" },
+    { "id": "career.scouting_travel", "label": "Pre-move California scouting or work travel", "workstream": "career", "scope": "common", "type": "spend", "timing": "post_trigger", "question_id": "q.scouting_trip" }
+  ],
+  "relocation_support_profiles": [
+    { "id": "unknown", "label": "Unknown / not yet stated (default)", "mode": "none", "covers": [], "note": "Modeled as zero coverage. This is not a prediction that Disney pays nothing - it means nothing is in writing yet." },
+    { "id": "none", "label": "Confirmed no relocation support", "mode": "none", "covers": [] },
+    { "id": "movers_hotels_reimbursed", "label": "Movers and hotels reimbursed, deposits excluded", "mode": "reimbursed", "covers": ["household_move.mover", "household_move.supplies", "household_move.valuation", "roadtrip.hotels"], "note": "Lane still fronts every dollar. Liquidity requirement is unchanged; net cost falls." },
+    { "id": "movers_hotels_direct", "label": "Movers direct-billed, hotels reimbursed", "mode": "mixed", "direct_billed": ["household_move.mover", "household_move.valuation"], "covers": ["household_move.mover", "household_move.valuation", "roadtrip.hotels"], "note": "Direct-billed items never touch Lane's cash; reimbursed items do." },
+    { "id": "lump_sum_5k", "label": "Lump sum $5,000 at start", "mode": "lump_sum", "amount": 5000, "covers": [], "note": "Timing matters: a lump sum paid with the first California paycheck does not fund a deposit due in week two." }
+  ]
+}

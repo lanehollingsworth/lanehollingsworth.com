@@ -1,0 +1,58 @@
+{
+  "why_three_dimensions": [
+    "evidence_type answers: what kind of evidence is this? (a document, a spreadsheet cell, a placeholder)",
+    "canonical_state answers: what role does this value play in current project state? (believed, contested, retired)",
+    "verification_state answers: has anyone outside this model confirmed it?",
+    "They are orthogonal on purpose. A planning assumption can be the accepted canonical value. A verified document can later be superseded. Two externally verified sources can conflict with each other. Collapsing these into one enum would read cleaner and mean less."
+  ],
+  "evidence_type": {
+    "question": "What kind of evidence is this?",
+    "values": {
+      "verified": "Current statement, official document, signed offer, lease, written vendor quote, official policy or live account data.",
+      "sheet_value": "Accepted planning state from the Google Sheet; may still be an assumption.",
+      "lane_confirmed": "Lane-provided fact, not yet backed by a document.",
+      "planning_assumption": "Explicitly modeled placeholder.",
+      "historical_observation": "Useful for planning, not a promise, and never an SLA.",
+      "research_lead": "Never silently promoted to verified.",
+      "session_override": "A session-scoped what-if. Never written to data."
+    },
+    "note": "This field was named `status` in Phase 1. The loader still accepts `status` as an input alias so older records keep working, and freshness thresholds key off this field exactly as before."
+  },
+  "canonical_state": {
+    "question": "What role does this value currently play in canonical project state?",
+    "values": {
+      "confirmed": "The model currently believes this value and may plan on it.",
+      "unresolved": "No canonical value yet. Evidence is missing, not contradictory.",
+      "conflicting_sources": "Two or more sources disagree. No canonical value may be inferred from either alone.",
+      "superseded": "This value was once current and has been replaced. Retained as evidence, never as belief."
+    }
+  },
+  "verification_state": {
+    "question": "Has anyone outside this model confirmed it?",
+    "values": {
+      "externally_verified": "Confirmed by a source outside Lane and this model (employer document, vendor quote, official record).",
+      "not_externally_verified": "Believed, but only on internal evidence.",
+      "not_applicable": "Verification is not a meaningful question for this record (a guardrail, a preference, a decision that is Lane's alone)."
+    },
+    "note": "Deliberately NOT a peer of confirmed or superseded. Something can be externally verified and later superseded, or externally verified and still conflict with another external source."
+  },
+  "resolution_required": {
+    "question": "What would it take to resolve this?",
+    "values": {
+      "external_confirmation": "Someone outside the model must state the fact (recruiter, HR, vendor, agent).",
+      "evidence_collection": "The evidence exists to be gathered; nobody has to decide anything yet.",
+      "lane_decision": "The evidence is in. The call is Lane's."
+    }
+  },
+  "validation_rules": [
+    { "id": "rule.confirmed_has_value", "applies_to": "confirmed", "requires": "canonical_value is not null" },
+    { "id": "rule.unresolved_has_no_value", "applies_to": "unresolved", "requires": "canonical_value is null and resolution_required is set" },
+    { "id": "rule.conflict_has_no_value", "applies_to": "conflicting_sources", "requires": "canonical_value is null, resolution_required is set, and at least two sources are recorded" },
+    { "id": "rule.superseded_points_forward", "applies_to": "superseded", "requires": "superseded_by and resolution_reason are set" },
+    { "id": "rule.no_commitment_on_contested", "applies_to": "unresolved, conflicting_sources", "requires": "the record is not usable for commitment; planning may continue around it" },
+    { "id": "rule.superseded_is_not_open", "applies_to": "superseded", "requires": "the record does not appear in the pending-resolution queue - a retired value is not an open decision" }
+  ],
+  "commitment_safe_states": ["confirmed"],
+  "planning_safe_states": ["confirmed", "unresolved", "conflicting_sources"],
+  "planning_note": "Planning continues around a contested value by modeling it as a range, a placeholder, or a branch. What a contested value may never do is authorize an irreversible action."
+}

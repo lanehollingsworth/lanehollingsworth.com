@@ -1,0 +1,23 @@
+{
+  "note": "What kind of attention a thing deserves right now - including none. A system that can only say 'do this' becomes an optimization monster that reports 37 improvements every morning.",
+  "states": {
+    "ACT_NOW": { "attention": "today", "label": "Do it now", "requires": ["owner"] },
+    "PLAN_NOW": { "attention": "today", "label": "Decide the approach now, execute later", "requires": ["owner"] },
+    "RESEARCH_NOW": { "attention": "this week", "label": "Gather evidence now", "requires": ["owner"] },
+    "SCHEDULED": { "attention": "on its date", "label": "Has a date and needs nothing before it", "requires": ["due"] },
+    "WAITING_ON_SOMEONE_ELSE": { "attention": "none until they reply", "label": "Blocked on another person", "requires": ["external_party"] },
+    "WATCH": { "attention": "none", "label": "Worth knowing about, not worth doing anything about", "requires": [] },
+    "INTENTIONALLY_DEFERRED": { "attention": "none - deliberately", "label": "The system has decided this should not have attention yet", "requires": ["deferral_reason", "revisit_trigger"] },
+    "NOT_WORTH_DOING": { "attention": "none", "label": "Considered and declined", "requires": ["deferral_reason"] },
+    "BLOCKED": { "attention": "none until unblocked", "label": "Blocked by another item in the model", "requires": ["blocked_by"] },
+    "COMPLETE": { "attention": "none", "label": "Done", "requires": [] }
+  },
+  "attention_states": ["ACT_NOW", "PLAN_NOW", "RESEARCH_NOW"],
+  "quiet_states": ["SCHEDULED", "WAITING_ON_SOMEONE_ELSE", "WATCH", "INTENTIONALLY_DEFERRED", "NOT_WORTH_DOING", "BLOCKED", "COMPLETE"],
+  "rules": [
+    "INTENTIONALLY_DEFERRED is a decision, not a backlog. It requires a reason and a revisit trigger, and it is reported as deliberate rather than as debt.",
+    "A thing may be in a quiet state and still be the most important thing in the model. Quiet is not unimportant.",
+    "Nothing may sit in ACT_NOW without an owner.",
+    "Cross-domain arbitration - deciding which of three ACT_NOW items actually gets today - is not implemented. The model reports; it does not yet rank across domains."
+  ]
+}

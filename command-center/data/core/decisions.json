@@ -1,0 +1,71 @@
+{
+  "note": "A lightweight decision log. Mutating JSON loses history; this keeps it, so the model can answer 'why do we believe this?' rather than only 'what do we believe?'.",
+  "decisions": [
+    {
+      "decision_id": "decision.tundra.drive_to_ca",
+      "effective_date": "2026-09-10",
+      "subject": "vehicle.tundra.disposition",
+      "previous_value": "evaluate_sale",
+      "new_value": "drive_to_california",
+      "reason": "The Tundra will transport Lane, Klein and Tilly. Vehicle ownership will be reassessed after California daily-life evidence exists.",
+      "source": "Lane decision",
+      "reversible": true,
+      "review_after": "3-6 months after California arrival"
+    },
+    {
+      "decision_id": "decision.cherie_title.hold_unresolved",
+      "effective_date": "2026-09-10",
+      "subject": "career.cherie_role.title",
+      "previous_value": "Senior Product Manager II (treated as settled)",
+      "new_value": null,
+      "reason": "The interview itinerary and the recruiting context disagree on level. Guessing a title would set compensation expectations on an unverified premise.",
+      "source": "Lane direction",
+      "reversible": true,
+      "review_after": "Recruiter or interview-team confirmation"
+    },
+    {
+      "decision_id": "decision.launch_fund.floor_not_budget",
+      "effective_date": "2026-09-10",
+      "subject": "launch_fund.floor",
+      "previous_value": "$10,000 read as the move budget",
+      "new_value": "$10,000 as an activation floor, with a computed ladder above it",
+      "reason": "The common physical move alone models to about $14,019, and the base transition to about $19,154. Treating the floor as the budget would have made the move look funded when it was not.",
+      "source": "Phase 1 model",
+      "reversible": false,
+      "review_after": null
+    },
+    {
+      "decision_id": "decision.path_branch_orthogonal",
+      "effective_date": "2026-09-10",
+      "subject": "scenario.dimensions",
+      "previous_value": "House branch shown inside the Path A/B/C columns",
+      "new_value": "Career path, house branch and employer support modeled as independent dimensions",
+      "reason": "A career path never selects a house branch. Embedding one in the other hides nine real combinations behind three.",
+      "source": "Phase 1 model",
+      "reversible": false,
+      "review_after": null
+    },
+    {
+      "decision_id": "decision.threads_stay_separate",
+      "effective_date": "2026-09-10",
+      "subject": "career.opportunities",
+      "previous_value": "Two Cherie-related records that looked like duplicates",
+      "new_value": "Two separate threads, one on hold pending its requisition ID",
+      "reason": "Merging recruiting threads on a guess destroys the ability to tell which process actually advanced.",
+      "source": "Lane direction",
+      "reversible": true,
+      "review_after": "Requisition confirmation"
+    },
+    {
+      "decision_id": "decision.house.stay_open",
+      "effective_date": "2026-09-10",
+      "subject": "house.orlando.disposition",
+      "previous_value": null,
+      "new_value": null,
+      "reason": "Lane leans toward selling, but PM quotes, the CMA and the replacement inspection are all outstanding. A lean is not evidence, so the branch stays unresolved and the model keeps pricing all three.",
+      "source": "Lane direction",
+      "reversible": true,
+      "review_after": "After PM quotes, CMA and inspection land"
+    }
+  ]
+}

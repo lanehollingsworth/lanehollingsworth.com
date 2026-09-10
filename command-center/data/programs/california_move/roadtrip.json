@@ -1,0 +1,16 @@
+{
+  "philosophy": ["Roughly 5-6 travel days", "6-8 actual driving hours per day", "Dog stop roughly every two hours", "One buffer day if possible", "Avoid repeated 10-12 hour driving days", "Dogs in the climate-controlled cabin with secure restraints", "Never transport dogs in the truck bed"],
+  "route_skeleton_status": "not_booked",
+  "route_skeleton": [
+    { "leg": 1, "from": "Orlando, FL", "to": "Mobile / Pensacola area", "miles": null, "status": "unrouted" },
+    { "leg": 2, "from": "Gulf Coast", "to": "Houston, TX", "miles": null, "status": "unrouted" },
+    { "leg": 3, "from": "Houston, TX", "to": "Fort Stockton / West Texas", "miles": null, "status": "unrouted" },
+    { "leg": 4, "from": "West Texas", "to": "Tucson, AZ", "miles": null, "status": "unrouted" },
+    { "leg": 5, "from": "Tucson, AZ", "to": "Los Angeles County, CA", "miles": null, "status": "unrouted" },
+    { "leg": 6, "from": "buffer / flex", "to": "buffer / flex", "miles": null, "status": "unrouted" }
+  ],
+  "route_note": "Leg mileage is deliberately null. The budget uses roadtrip.route_miles (a 2,500-mile placeholder) until real legs are routed; do not backfill leg miles from memory.",
+  "cabin_kit": ["familiar bedding", "food and water", "bowls", "treats", "medications", "towels", "waste bags", "cleanup supplies", "vaccine records", "backup leashes and harnesses", "microchip information"],
+  "preparation": ["Progressively longer rehearsal drives before departure", "Vet consultation for anxiety or motion sickness if needed", "Trial any medication before the actual trip, never on day one"],
+  "module_requirements": ["exact origin/destination", "optional waypoints", "maximum daily driving threshold", "maximum continuous driving between dog breaks", "pet-friendly hotel constraints", "nightly rate cap", "pet-fee capture", "route/weather risk", "fuel-price refresh", "Tundra MPG", "departure date", "arrival deadline", "one-day buffer", "pre-trip service checklist", "packing checklist", "emergency-vet lookup near overnight stops", "final trip budget vs actual"]
+}

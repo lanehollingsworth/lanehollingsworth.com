@@ -1,0 +1,171 @@
+---
+export const prerender = false;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Write" description="Private compose page">
+  <meta slot="head" name="robots" content="noindex,nofollow" />
+  <div class="site-shell site-shell--single">
+    <div class="site-main write-page">
+      <header class="site-header">
+        <h1 class="site-title">Write</h1>
+      </header>
+
+      <p class="write-note">
+        Private compose tool. Posts are saved into git, then Vercel redeploys the site.
+      </p>
+
+      <form id="write-form" class="write-form">
+        <label class="write-label">
+          Password
+          <input class="write-input" type="password" name="password" required autocomplete="current-password" />
+        </label>
+
+        <label class="write-label">
+          Title
+          <input class="write-input" type="text" name="title" required maxlength="120" />
+        </label>
+
+        <label class="write-label">
+          Words <span class="write-optional">(optional)</span>
+          <textarea class="write-input write-textarea" name="body" rows="6"></textarea>
+        </label>
+
+        <label class="write-label">
+          Photos
+          <input class="write-input" type="file" name="photos" accept="image/*" multiple />
+        </label>
+
+        <label class="write-check">
+          <input type="checkbox" name="draft" value="true" />
+          Save as draft
+        </label>
+
+        <button class="write-submit" type="submit">Publish</button>
+      </form>
+
+      <pre id="write-status" class="write-status" hidden></pre>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .write-page {
+    max-width: 36rem;
+  }
+
+  .write-note {
+    margin: 0 0 2rem;
+    color: var(--ink-soft);
+    font-size: 1rem;
+  }
+
+  .write-form {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .write-label {
+    display: grid;
+    gap: 0.45rem;
+    font-family: var(--font-meta);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .write-optional {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.85rem;
+  }
+
+  .write-input,
+  .write-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--brown-line);
+    background: rgba(255, 255, 255, 0.35);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .write-textarea {
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .write-check {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    font-family: var(--font-meta);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+
+  .write-submit {
+    appearance: none;
+    border: none;
+    background: var(--brown);
+    color: var(--bg);
+    font-family: var(--font-meta);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.95rem 1.2rem;
+    cursor: pointer;
+  }
+
+  .write-submit:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .write-status {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(92, 74, 61, 0.06);
+    border: 1px solid rgba(160, 130, 109, 0.35);
+    white-space: pre-wrap;
+    font-family: var(--font-meta);
+    font-size: 0.85rem;
+    color: var(--ink);
+  }
+</style>
+
+<script>
+  const form = document.getElementById('write-form') as HTMLFormElement | null;
+  const statusEl = document.getElementById('write-status') as HTMLPreElement | null;
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!form || !statusEl || !submitBtn) return;
+
+    statusEl.hidden = false;
+    statusEl.textContent = 'Publishing…';
+    submitBtn.disabled = true;
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/api/publish', {
+        method: 'POST',
+        body: formData,
+      });
+      const json = await response.json();
+      if (!response.ok || !json.ok) {
+        throw new Error(json.error || `Request failed (${response.status})`);
+      }
+      statusEl.textContent = `Published.\nSlug: ${json.slug}\nCommit: ${json.commitUrl}\n\nVercel will redeploy in about a minute.`;
+      form.reset();
+    } catch (error) {
+      statusEl.textContent = error instanceof Error ? error.message : 'Publish failed';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>

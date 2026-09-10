@@ -1,0 +1,223 @@
+{
+  "id": "california_move",
+  "name": "California Move",
+  "status": "active",
+  "domain_tags": [
+    "career",
+    "finance",
+    "home",
+    "vehicles",
+    "pets",
+    "community",
+    "benefits",
+    "household"
+  ],
+  "opened": "2026-09-10",
+  "north_star": "Live in Los Angeles County in a Disney role by March 2027. Activate the move only when a pathway is professionally authorized and financially executable.",
+  "horizon": "2027-03-31",
+  "origin": "Orlando, FL",
+  "destination": "Los Angeles County, CA",
+  "planning_date": "2026-09-10",
+  "human_source_of_truth": "Google Sheet: Lane California Move Command Center",
+  "machine_source_of_truth": "command-center/data/programs/california_move/*.json",
+  "completion_criteria": [
+    "Lane, Klein and Tilly are established in Los Angeles County.",
+    "The Orlando house branch is executed and closed out.",
+    "The first normal California paycheck has landed.",
+    "Arrival stabilization is past its first 90 days."
+  ],
+  "on_completion": [
+    "Set status to complete. Every rule whose owner_scope is program:california_move retires automatically.",
+    "Enduring preferences, domain guardrails and the decision log survive - they belong to Lane, not to this program.",
+    "Open future_review rules (Tundra ownership, California housing permanence) move to their owning domains."
+  ],
+  "gates": [
+    {
+      "id": "gate_0",
+      "name": "Research readiness",
+      "state": "open",
+      "allowed": [
+        "quotes",
+        "research",
+        "interviews",
+        "decluttering",
+        "inspection",
+        "CMA",
+        "budget modeling",
+        "community research",
+        "benefits research"
+      ],
+      "blocked": [
+        "California lease signature",
+        "nonrefundable major move services",
+        "listing the Orlando house on the strength of an application alone"
+      ]
+    },
+    {
+      "id": "gate_1",
+      "name": "Professional authorization",
+      "state": "not_met",
+      "requires_any": [
+        "written California offer",
+        "approved current-role California work-location change"
+      ]
+    },
+    {
+      "id": "gate_2",
+      "name": "Financial executability",
+      "state": "not_met",
+      "requires_all": [
+        "compensation confirmed",
+        "relocation support status stated",
+        "net available move cash",
+        "Venture X debt status",
+        "launch fund position",
+        "deposit estimate",
+        "household move quote",
+        "road trip budget",
+        "Orlando overlap",
+        "house branch",
+        "contingency intact"
+      ]
+    },
+    {
+      "id": "gate_3",
+      "name": "California housing executable",
+      "state": "not_met",
+      "requires_all": [
+        "worksite + office cadence",
+        "commute tested",
+        "lease terms",
+        "dogs accepted",
+        "parking fits Tundra",
+        "total move-in cash",
+        "lease timing aligned to employment transition"
+      ]
+    },
+    {
+      "id": "gate_4",
+      "name": "Orlando house branch selected",
+      "state": "not_met",
+      "requires_any": [
+        "sell",
+        "rent",
+        "defer"
+      ]
+    },
+    {
+      "id": "gate_5",
+      "name": "Move booked",
+      "state": "not_met",
+      "requires_all": [
+        "household goods plan",
+        "Tundra service",
+        "dog plan",
+        "hotels",
+        "departure date",
+        "utilities",
+        "address changes",
+        "California arrival setup"
+      ]
+    },
+    {
+      "id": "gate_6",
+      "name": "Arrival stabilization",
+      "state": "not_met",
+      "requires_all": [
+        "14 days basic mode",
+        "first-90-day community activation"
+      ]
+    }
+  ],
+  "deferred_actions": [
+    {
+      "id": "defer.sign_a_california_lease",
+      "action": "Sign a California lease",
+      "action_state": "INTENTIONALLY_DEFERRED",
+      "deferral_reason": "Lease terms must follow final worksite, start date and office cadence.",
+      "revisit_trigger": "gate_3"
+    },
+    {
+      "id": "defer.book_movers_or_a_container_nonrefundable",
+      "action": "Book movers or a container (nonrefundable)",
+      "action_state": "INTENTIONALLY_DEFERRED",
+      "deferral_reason": "Quotes are free before the trigger; deposits are not refundable after it.",
+      "revisit_trigger": "gate_2"
+    },
+    {
+      "id": "defer.list_the_orlando_house",
+      "action": "List the Orlando house",
+      "action_state": "INTENTIONALLY_DEFERRED",
+      "deferral_reason": "An interview or application is not authorization.",
+      "revisit_trigger": "gate_1"
+    },
+    {
+      "id": "defer.buy_a_california_home",
+      "action": "Buy a California home",
+      "action_state": "INTENTIONALLY_DEFERRED",
+      "deferral_reason": "Year one is rental infrastructure, not a forever-home decision.",
+      "revisit_trigger": "post_arrival"
+    },
+    {
+      "id": "defer.liquidate_brokerage_to_pre-fund_the_move",
+      "action": "Liquidate brokerage to pre-fund the move",
+      "action_state": "INTENTIONALLY_DEFERRED",
+      "deferral_reason": "Long-term investments are not the core Launch Fund source; size the real requirement first.",
+      "revisit_trigger": "gate_2"
+    },
+    {
+      "id": "defer.volunteer_to_waive_relocation_support",
+      "action": "Volunteer to waive relocation support",
+      "action_state": "INTENTIONALLY_DEFERRED",
+      "deferral_reason": "Let Disney/HR state what applies.",
+      "revisit_trigger": "never"
+    },
+    {
+      "id": "defer.sell_the_tundra",
+      "action": "Sell the Tundra",
+      "action_state": "INTENTIONALLY_DEFERRED",
+      "deferral_reason": "Current plan is to drive it; re-evaluate ownership after 3-6 months of real California parking, fuel and commute.",
+      "revisit_trigger": "post_arrival_90d"
+    },
+    {
+      "id": "defer.activate_more_than_1-2_community_anchors",
+      "action": "Activate more than 1-2 community anchors",
+      "action_state": "INTENTIONALLY_DEFERRED",
+      "deferral_reason": "Choir first; expansion is a first-90-day decision, not a move-week one.",
+      "revisit_trigger": "gate_6"
+    }
+  ],
+  "launch_fund_ladder": [
+    {
+      "id": "rung.floor",
+      "label": "Minimum launch floor",
+      "basis": "static",
+      "amount": 10000,
+      "meaning": "Enough to activate a move under favorable employer-support conditions. Original headline goal; a floor, not the budget."
+    },
+    {
+      "id": "rung.common_move",
+      "label": "Common physical-move requirement",
+      "basis": "computed:common",
+      "meaning": "Housing at move-in, household move, road trip, setup and contingency."
+    },
+    {
+      "id": "rung.base_transition",
+      "label": "Base transition requirement",
+      "basis": "computed:common+orlando_transition",
+      "meaning": "Common move plus Orlando overlap and basic prep."
+    },
+    {
+      "id": "rung.house_branch",
+      "label": "House-branch requirement",
+      "basis": "computed:branch",
+      "meaning": "Adds the landlord reserve and PM fees if renting, or seller-specific cash if selling."
+    },
+    {
+      "id": "rung.comfort",
+      "label": "Comfort target",
+      "basis": "computed:branch*1.15",
+      "meaning": "Execute without relying on windfalls or the emergency fund. 15% cushion over the branch requirement."
+    }
+  ]
+}

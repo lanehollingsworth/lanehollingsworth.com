@@ -1,0 +1,46 @@
+{
+  "priority_structure": {
+    "day_one_infrastructure": ["neighborhood orientation", "dog walking", "groceries", "commute", "vet", "basic household routines"],
+    "first_90_day_anchors": { "max_anchors": 2, "note": "Choir is #1. Choose only one or two major recurring anchors initially." },
+    "later_expansion": ["pottery", "Masonic lodge", "golf / driving range", "fly fishing", "motorcycle training and community", "poker / social groups", "cigar community", "tech networking", "beaches and nature", "arts", "yoga teaching"]
+  },
+  "arrival_grace": {
+    "window_days": 14,
+    "rule": "Do not evaluate whether California was a mistake during the first 14 days.",
+    "focus": ["sleep", "new job", "dogs", "groceries", "unpacking", "commute basics", "one walking route", "one familiar restaurant or coffee option", "basic administrative setup"],
+    "normal_outcomes": ["overspending somewhat in the first month", "missing Orlando", "loneliness on some nights", "dogs acting differently for several days", "ordering takeout", "discovering the first neighborhood is not forever", "needing months rather than days to rebuild community"],
+    "system_rule": "None of the above is project failure. Do not let the readiness report treat them as red."
+  },
+  "choir": {
+    "priority": 1,
+    "track_per_candidate": ["audition windows", "rehearsal night", "commute from candidate housing", "concert commitments", "conflicts with in-office days"],
+    "candidates": [
+      { "id": "pasadena_chorale", "name": "Pasadena Chorale", "rehearsal": "Monday evenings", "notes": "Strongest overall Orlando-Sings-style candidate; serious community choral environment.", "status": "research_lead" },
+      { "id": "voices_la", "name": "Voices LA", "rehearsal": "Every other Tuesday, Pasadena", "notes": "Auditioned volunteer choir of trained singers.", "status": "research_lead" },
+      { "id": "gmcla", "name": "Gay Men's Chorus of Los Angeles", "rehearsal": "Monday 7-10 PM", "notes": "Serious singing plus explicit LGBTQ+ community.", "status": "research_lead" },
+      { "id": "pasadena_choral_society", "name": "Pasadena Choral Society", "rehearsal": "Tuesday evenings", "notes": "Smaller auditioned classical ensemble; potentially more flexible commitment.", "status": "research_lead" },
+      { "id": "towne_singers", "name": "Towne Singers", "rehearsal": "Monday", "notes": "Broader community repertoire, Pasadena / La Canada / Glendale foothills.", "status": "research_lead" },
+      { "id": "glendale_college_concert_singers", "name": "Glendale College Concert Singers", "rehearsal": "Monday evenings", "notes": "Auditioned students and community members.", "status": "research_lead" },
+      { "id": "pasadena_playhouse_singers", "name": "Pasadena Playhouse Singers Ensemble", "rehearsal": "Monday", "notes": "Musical-theater-focused community ensemble / session model.", "status": "research_lead" }
+    ],
+    "conflict_note": "Most candidates rehearse Monday. If the office cadence puts a late Monday in Glendale, that is a real scheduling constraint to solve, not a detail."
+  },
+  "anchors": [
+    { "id": "filthy_habit", "name": "Filthy Habit Clay Studio", "category": "pottery", "area": "Montrose / Glendale", "status": "research_lead" },
+    { "id": "green_and_bisque", "name": "Green & Bisque Clayhouse", "category": "pottery", "area": "Pasadena", "status": "research_lead" },
+    { "id": "scholl_canyon", "name": "Scholl Canyon Golf Course / driving range", "category": "golf", "area": "Glendale", "status": "research_lead" },
+    { "id": "upper_east_fork", "name": "San Gabriel Mountains / Upper East Fork", "category": "fly_fishing", "area": "San Gabriels", "status": "research_lead" },
+    { "id": "beaches", "name": "Santa Monica / Malibu", "category": "nature", "area": "Westside", "status": "research_lead", "notes": "Day trips without requiring Westside housing." },
+    { "id": "glendale_lodge_368", "name": "Glendale Masonic Lodge #368", "category": "masonic", "area": "Glendale", "status": "research_lead" },
+    { "id": "burbank_lodge_406", "name": "Burbank Lodge #406", "category": "masonic", "area": "Burbank", "status": "research_lead" },
+    { "id": "puro_humo", "name": "Puro Humo Cigars", "category": "cigar", "area": "Glendale", "status": "research_lead" },
+    { "id": "gran_reserva", "name": "Gran Reserva Cigar Lounge", "category": "cigar", "area": "Glendale", "status": "research_lead" },
+    { "id": "amo_cmsp", "name": "Academy of Motorcycle Operation / CMSP", "category": "motorcycle", "status": "research_lead" },
+    { "id": "ride_to_live", "name": "Glendale Police Ride to Live", "category": "motorcycle", "status": "research_lead", "notes": "After licensing and bike requirements are met." },
+    { "id": "bike_nights", "name": "Local riding communities / bike nights", "category": "motorcycle", "status": "research_lead", "notes": "Safety culture is a fit criterion." },
+    { "id": "poker_group", "name": "LGBTQ+/bi-friendly recurring poker group", "category": "social", "status": "unverified", "notes": "Desired but not yet verified to exist. Do not present as found." }
+  ],
+  "yoga": { "current": "Teaches yoga at Gaylord Palms in Orlando and loves it.",
+    "note": "Leaving it is a real emotional cost of the move, not a rounding error.",
+    "track": "Southern California hospitality/resort yoga-instructor roles, as lifestyle continuity rather than side-income optimization." }
+}

@@ -1,0 +1,35 @@
+{
+  "principle": "Authority is earned by capability. Autonomy is not one global permission bit, and it can be revoked.",
+  "levels": {
+    "auto": "The agent may do this without asking. Deterministic, reversible, or read-only.",
+    "supervised": "The agent may do this and must report it. Reversible, but it changes state Lane relies on.",
+    "approval_required": "The agent may prepare it in full and must stop at ready_for_lane_decision.",
+    "lane_only": "The agent may calculate, recommend and sequence it. It may never execute it, and may never record it as decided."
+  },
+  "review_rule": "A capability's authority rises only on measured performance, never on an agent's assessment of its own reliability. Any authority may be revoked at any time.",
+  "grants": [
+    { "capability": "calc.*", "action": "recalculate", "authority": "auto", "why": "Deterministic and reversible; verified by known-answer tests." },
+    { "capability": "research.freshness", "action": "flag stale assumptions", "authority": "auto" },
+    { "capability": "model.canonical_state", "action": "detect conflicts", "authority": "auto", "why": "Detecting a conflict is not resolving one." },
+    { "capability": "reports.*", "action": "prepare readiness, pulse, attention, verification reports", "authority": "auto" },
+    { "capability": "reports.recommendation", "action": "draft a recommendation with evidence coverage", "authority": "auto", "why": "Drafting is not deciding." },
+    { "capability": "integration.sheets.read", "action": "read an approved data source", "authority": "auto", "why": "Read-only, least-privilege scope, zero writes asserted." },
+    { "capability": "model.*", "action": "modify a planning record (assumption value, task state)", "authority": "supervised", "why": "Reversible, but Lane plans on it. Changes are reported and diffable." },
+    { "capability": "model.canonical_records", "action": "resolve a conflicting_sources record", "authority": "approval_required", "why": "Only external confirmation or Lane settles a conflict; the model may never pick a side." },
+    { "capability": "integration.sheets.write", "action": "write back to the spreadsheet", "authority": "approval_required", "why": "Targeted, dry-runnable, pre-state and post-state captured, and never without an explicit approval." },
+    { "capability": "comms.*", "action": "send a communication on Lane's behalf", "authority": "approval_required" }
+  ],
+  "lane_only_actions": [
+    { "id": "accept_offer", "label": "Accept a job offer" },
+    { "id": "sign_california_lease", "label": "Sign a California lease" },
+    { "id": "list_orlando_house", "label": "List the Orlando house" },
+    { "id": "accept_house_sale_contract", "label": "Accept a sale contract" },
+    { "id": "sign_property_management_contract", "label": "Sign a property-management contract" },
+    { "id": "book_major_nonrefundable_mover", "label": "Book a major non-refundable mover" },
+    { "id": "liquidate_investments", "label": "Liquidate investments" },
+    { "id": "waive_relocation_support", "label": "Waive relocation support" },
+    { "id": "purchase_california_home", "label": "Buy a California home" }
+  ],
+  "recommendation_states": ["researchable_now", "recommended_now", "ready_for_approval", "approved", "committed", "completed", "blocked"],
+  "recommendation_rule": "\"We modeled this\" is never \"we decided this\". A lane_only action may reach ready_for_approval and no further without Lane."
+}
